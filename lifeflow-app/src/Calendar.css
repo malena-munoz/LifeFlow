@@ -123,7 +123,8 @@ form {
 form#daily-data {
   margin-top: -8px;
   scrollbar-width: none;
-  gap: 1rem;
+  gap: 2rem;
+  padding: 8px;
 }
 
 .form-property {
@@ -136,6 +137,10 @@ form#daily-data {
   background: #fff;
   padding: 2rem;
   gap: 1rem;
+}
+.form-property.property-contained .form-check-input:checked {
+  background-color: #64B5F6;
+  border-color: #64B5F6;
 }
 .form-property h5 {
   color: #FF4D94;

@@ -101,6 +101,15 @@ nav {
         &#icono-app {
             filter: drop-shadow(0px 0px 0px $rosa-oscuro);
         }
+
+        &#icono-perfil {
+            transition: all ease-in .1s;
+            cursor: pointer;
+
+            &:active {
+                transform: scale(0.9);
+            }
+        }
     }
 
     ul {
@@ -138,6 +147,35 @@ nav {
 
     a, span {
         color: $negro;
+    }
+
+    .settings {
+        display: flex;
+        flex-direction: column;
+        background-color: $blanco;
+        gap: .5rem;
+        padding: 1.5rem;
+        border-radius: .25rem;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 30px 0px;
+        position: fixed;
+        right: 1rem;
+        margin-top: 1.5rem;
+        
+        a {
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+            color: $rosa-muy-oscuro !important;
+            cursor: pointer;
+            transition: all ease-in .2s;
+            padding: .5rem 1rem;
+            border-radius: .25rem;
+
+            &:hover {
+                background-color: $rosa-muy-oscuro;
+                color: $blanco !important;
+            }
+        }
     }
 }
 
@@ -204,6 +242,19 @@ form {
         background: #fff;
         padding: 2rem;
         gap: 1rem;
+
+        .form-check-input { 
+            cursor: pointer;
+            border: 2px solid $azul-oscuro;
+
+            &:checked {
+                background-color: $azul-oscuro;
+                border-color: $azul-oscuro;
+            }
+            &:focus {
+                box-shadow: none;
+            }
+        }
     }
 
     h5 {

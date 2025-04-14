@@ -57,10 +57,6 @@ export function Days(date) {
 export function IsCurrentDay(fecha, day) {
     let fechaActual = new Date();
     let fechaParaComparar = new Date(fecha.anio, fecha.mes, day);
-    console.log("Año", fechaActual.getFullYear() === fechaParaComparar.getFullYear() );
-    console.log("Mes",fechaActual.getMonth() === fechaParaComparar.getMonth() );
-    console.log("Dia", fechaActual.getDate() === fechaParaComparar.getDate());
-    console.log("-------------------");
 
     return fechaActual.getFullYear() == fechaParaComparar.getFullYear() 
         && fechaActual.getMonth() == fechaParaComparar.getMonth() 

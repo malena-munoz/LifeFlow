@@ -4,10 +4,11 @@ import Index from '../pages/main/Index';
 export default function Main(props) {
 
     const user = props.user;
+    const setLoginStatus = props.setLoginStatus;
 
     return (
         <>
-            <Nav user={user} />
+            <Nav user={user} setLoginStatus={setLoginStatus}/>
             <Index />
         </>
     );

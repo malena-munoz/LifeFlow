@@ -1,3 +1,16 @@
+import { ReactComponent as SpineIcon } from 'healthicons/public/icons/svg/filled/body/spine.svg';
+import { ReactComponent as StomachIcon } from 'healthicons/public/icons/svg/filled/body/stomach.svg';
+import { ReactComponent as KidneysIcon } from 'healthicons/public/icons/svg/filled/body/kidneys.svg';
+import { ReactComponent as BladderIcon } from 'healthicons/public/icons/svg/filled/body/bladder.svg';
+import { ReactComponent as UterusIcon } from 'healthicons/public/icons/svg/filled/body/female_reproductive_system.svg';
+import { ReactComponent as HeadIcon } from 'healthicons/public/icons/svg/filled/body/head.svg';
+import { ReactComponent as BreastIcon } from 'healthicons/public/icons/svg/filled/people/lactation.svg';
+import { ReactComponent as DiarrheaIcon } from 'healthicons/public/icons/svg/filled/conditions/diarrhea.svg';
+import { ReactComponent as NauseasIcon } from 'healthicons/public/icons/svg/filled/conditions/nausea.svg';
+import { ReactComponent as VomitIcon } from 'healthicons/public/icons/svg/filled/conditions/vomiting.svg';
+import { ReactComponent as FeverIcon } from 'healthicons/public/icons/svg/filled/conditions/chills_fever.svg';
+
+
 export function Emotions() {
     return [
         { id: 1, icon: 'fi fi-rr-smile', label: 'Feliz' },
@@ -25,12 +38,35 @@ export function Emotions() {
 
 export function BodyParts() {
     return [
-        { id: 1, icon: 'fi fi-rr-lower-back', label: 'Espalda' },
-        { id: 2, icon: 'fi fi-rr-stomach', label: 'Estómago' },
-        { id: 3, icon: 'fi fi-rr-kidneys', label: 'Riñones' },
-        { id: 4, icon: 'fi fi-rr-user-sitting-toilet', label: 'Vejiga' },
-        { id: 5, icon: 'fi fi-rr-rose', label: 'Aparato reproductor' },
-        { id: 6, icon: 'fi fi-rr-head-side', label: 'Cabeza' },
-        { id: 7, icon: 'fi fi-rr-venus', label: 'Pecho' }
+        { id: 1, icon: SpineIcon, label: 'Espalda' },
+        { id: 2, icon: StomachIcon, label: 'Estómago' },
+        { id: 3, icon: KidneysIcon, label: 'Riñones' },
+        { id: 4, icon: BladderIcon, label: 'Vejiga' },
+        { id: 5, icon: UterusIcon, label: 'Aparato reproductor' },
+        { id: 6, icon: HeadIcon, label: 'Cabeza' },
+        { id: 7, icon: BreastIcon, label: 'Pecho' }
+    ];
+}
+
+export function Symptoms() {
+    return [
+        { id: 1, icon: DiarrheaIcon, label: 'Diarrea' },
+        { id: 2, icon: NauseasIcon, label: 'Náuseas' },
+        { id: 3, icon: VomitIcon, label: 'Vómitos' },
+        { id: 4, icon: FeverIcon, label: 'Fiebre' },
+    ];
+}
+
+export function FemFluid() {
+    return [
+        { id: 1, icon: 'fi fi-rr-egg-fried', label: 'Clara de huevo' },
+        { id: 2, icon: 'fi fi-rr-raindrops', label: 'Acuoso' },
+        { id: 3, icon: 'fi fi-rr-cream', label: 'Cremoso' },
+        { id: 4, icon: 'fi fi-rr-honey-pot', label: 'Pegajoso' },
+        { id: 5, icon: 'fi fi-rr-cactus', label: 'Seco' },
+        { id: 6, icon: 'fi fi-rr-custard', label: 'Gelatinoso' },
+        { id: 7, icon: 'fi fi-rr-wind-warning', label: 'Maloliente' },
+        { id: 8, icon: 'fi fi-rr-pepper-hot', label: 'Picante' },
+        { id: 9, icon: 'fi fi-rr-cheese', label: 'Picante' }
     ];
 }
