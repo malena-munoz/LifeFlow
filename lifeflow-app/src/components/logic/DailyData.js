@@ -22,3 +22,15 @@ export function Emotions() {
         { id: 20, icon: 'fi fi-rr-snowflake', label: 'Distante' },
     ];
 }
+
+export function BodyParts() {
+    return [
+        { id: 1, icon: 'fi fi-rr-lower-back', label: 'Espalda' },
+        { id: 2, icon: 'fi fi-rr-stomach', label: 'Estómago' },
+        { id: 3, icon: 'fi fi-rr-kidneys', label: 'Riñones' },
+        { id: 4, icon: 'fi fi-rr-user-sitting-toilet', label: 'Vejiga' },
+        { id: 5, icon: 'fi fi-rr-rose', label: 'Aparato reproductor' },
+        { id: 6, icon: 'fi fi-rr-head-side', label: 'Cabeza' },
+        { id: 7, icon: 'fi fi-rr-venus', label: 'Pecho' }
+    ];
+}

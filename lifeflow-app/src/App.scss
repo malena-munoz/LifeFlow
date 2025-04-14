@@ -82,6 +82,7 @@ nav {
     height: 4rem;
     position: sticky;
     top: 0;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     padding: .75rem 1rem;
@@ -177,6 +178,18 @@ article {
     gap: 2rem;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+
+    &#daily-data {
+        margin-top: -8px;
+        scrollbar-width: none;
+        gap: 2rem;
+        padding: 8px;
+    }
+}
+
 // ----------------------------------------------------------------------------
 //   ELEMENTS
 // ----------------------------------------------------------------------------
@@ -190,12 +203,13 @@ article {
         border-radius: .25rem;
         background: #fff;
         padding: 2rem;
-        gap: .5rem;
+        gap: 1rem;
     }
 
     h5 {
         color: $rosa-oscuro;
         font-weight: bold;
+        margin: 0;
     }
 }
 

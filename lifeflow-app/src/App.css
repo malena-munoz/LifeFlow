@@ -31,6 +31,7 @@ nav {
   height: 4rem;
   position: sticky;
   top: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   padding: 0.75rem 1rem;
@@ -115,6 +116,17 @@ article {
   gap: 2rem;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+}
+form#daily-data {
+  margin-top: -8px;
+  scrollbar-width: none;
+  gap: 2rem;
+  padding: 8px;
+}
+
 .form-property {
   display: flex;
   flex-direction: column;
@@ -124,11 +136,12 @@ article {
   border-radius: 0.25rem;
   background: #fff;
   padding: 2rem;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 .form-property h5 {
   color: #FF4D94;
   font-weight: bold;
+  margin: 0;
 }
 
 .icon-item {

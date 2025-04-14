@@ -1,0 +1,6 @@
+@lifeflow_api_HostAddress = https://localhost:7245
+
+GET {{lifeflow_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

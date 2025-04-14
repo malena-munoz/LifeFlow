@@ -28,6 +28,7 @@
 
         .month {
             user-select: none;
+            cursor: pointer;
             text-transform: uppercase;
             font-size: 13px;
             color: $gris;

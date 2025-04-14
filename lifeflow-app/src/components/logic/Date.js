@@ -4,21 +4,27 @@ const meses = [
 ];
 
 export function CalendarObject() {
-    let fechaActual = new Date();
-    let fechaAnterior = new Date(fechaActual.getMonth()-1 === 11 ? fechaActual.getFullYear()-1 : fechaActual.getFullYear(), fechaActual.getMonth()-1, 1);
-    let fechaSiguiente = new Date(fechaActual.getMonth()+1 === 0 ? fechaActual.getFullYear()+1 : fechaActual.getFullYear(), fechaActual.getMonth()+1, 1);
+    const hoy = new Date(); 
 
+    // JS maneja automáticamente los overflow de meses
+    const fechaActual = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // día 1
+    const fechaAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+    const fechaSiguiente = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+    
     const calendar_obj = {
         actual: {
-            objeto: fechaActual,
+            anio: fechaActual.getFullYear(),
+            mes: fechaActual.getMonth(),
             nombre: meses[fechaActual.getMonth()]
         },
         anterior: {
-            objeto: fechaAnterior,
+            anio: fechaAnterior.getFullYear(),
+            mes: fechaAnterior.getMonth(),
             nombre: meses[fechaAnterior.getMonth()]
         },
         siguiente: {
-            objeto: fechaSiguiente,
+            anio: fechaSiguiente.getFullYear(),
+            mes: fechaSiguiente.getMonth(),
             nombre: meses[fechaSiguiente.getMonth()]
         }
     };
@@ -27,9 +33,9 @@ export function CalendarObject() {
 }
 
 export function Days(date) {
-    let primer_dia_numero = new Date(date.getFullYear(), date.getMonth(), 1);
+    let primer_dia_numero = new Date(date.anio, date.mes, 1);
     let primer_dia_semana = primer_dia_numero.getDay() == 0 ? 7 : primer_dia_numero.getDay();
-    let dias_mes = new Date(date.getMonth() === 12 ? date.getFullYear()+1 : date.getFullYear(), date.getMonth() === 12 ? 1 : date.getMonth(), 0).getDate(); 
+    let dias_mes = new Date(date.mes === 12 ? date.anio+1 : date.anio, date.mes === 12 ? 1 : date.mes, 0).getDate(); 
     
     let dias = [];
 
@@ -48,7 +54,15 @@ export function Days(date) {
     return dias;
 }
 
-export function IsCurrentDay(day) {
-    let fechaComparar = new Date().setDate(day);
-    return new Date() === fechaComparar ? 'day--current' : '';
+export function IsCurrentDay(fecha, day) {
+    let fechaActual = new Date();
+    let fechaParaComparar = new Date(fecha.anio, fecha.mes, day);
+    console.log("Año", fechaActual.getFullYear() === fechaParaComparar.getFullYear() );
+    console.log("Mes",fechaActual.getMonth() === fechaParaComparar.getMonth() );
+    console.log("Dia", fechaActual.getDate() === fechaParaComparar.getDate());
+    console.log("-------------------");
+
+    return fechaActual.getFullYear() == fechaParaComparar.getFullYear() 
+        && fechaActual.getMonth() == fechaParaComparar.getMonth() 
+        && fechaActual.getDate() == fechaParaComparar.getDate() ? 'day--current' : '';
 }
