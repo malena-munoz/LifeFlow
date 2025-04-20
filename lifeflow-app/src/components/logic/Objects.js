@@ -70,3 +70,19 @@ export function FemFluid() {
         { id: 9, icon: 'fi fi-rr-cheese', label: 'Picante' }
     ];
 }
+
+export function GooogleColors() {
+    return [
+        { value: 8, color: '#e1e1e1', label: 'Naranja melón' },
+        { value: 10, color: '#51b749', label: 'Verde musgo'},
+        { value: 1, color: '#a4bdfc', label: 'Azul claro' },
+        { value: 9, color: '#5484ed', label: 'Azul arándano' },
+        { value: 2, color: '#7ae7bf', label: 'Azul turquesa' },
+        { value: 7, color: '#46d6db', label: 'Turquesa' },
+        { value: 3, color: '#dbadff', label: 'Lavanda' },   
+        { value: 5, color: '#fbd75b', label: 'Amarillo huevo' },
+        { value: 6, color: '#ffb878', label: 'Mandarina' },
+        { value: 4, color: '#ff887c', label: 'Rosa chicle'},
+        { value: 11, color: '#dc2127', label: 'Tomate' }
+    ];
+}

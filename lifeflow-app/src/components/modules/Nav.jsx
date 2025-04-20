@@ -8,7 +8,6 @@ import { GoogleLogout } from '../logic/Google';
 export default function Nav(props) {
     const [iconClicked, setIconClicked] = useState(false);
     const user = props.user;
-    console.log(user);
 
     const toggleIconClicked = () => {
         setIconClicked(prev =>  prev === true ? false : true);
@@ -16,17 +15,17 @@ export default function Nav(props) {
 
     return (
         <nav>
-            <div class="col d-flex align-items-center justify-content-start gap-3">
+            <div className="col d-flex align-items-center justify-content-start gap-3">
                 <img id="icono-app" src={icono_app} alt="" />
                 <img id="titulo-app" src={titulo_app} alt="" />
             </div>
-            <div class="col d-flex align-items-center justify-content-center gap-4">
+            <div className="col d-flex align-items-center justify-content-center gap-4">
                 <ul>
-                    <li><a>Calendario</a></li>
-                    <li><a>Recordatorios</a></li>
-                    <li><a>Estadísticas</a></li>
-                    <li><a>Guía</a></li>
-                    <li><a>Privacidad</a></li>
+                    <li onClick={() => props.setPage(1)}><a>Calendario</a></li>
+                    <li onClick={() => props.setPage(2)}><a>Recordatorios</a></li>
+                    <li onClick={() => props.setPage(3)}><a>Estadísticas</a></li>
+                    <li onClick={() => props.setPage(4)}><a>Guía</a></li>
+                    <li onClick={() => props.setPage(5)}><a>Privacidad</a></li>
                 </ul> 
             </div>
             <div className="col d-flex align-items-center justify-content-end gap-3">

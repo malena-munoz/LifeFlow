@@ -1,5 +1,5 @@
 import Calendar from "../../modules/Calendar";
-import { Emotions, BodyParts, Symptoms, FemFluid } from "../../logic/DailyData";
+import { Emotions, BodyParts, Symptoms, FemFluid } from "../../logic/Objects";
 import { useState } from "react";
 import HorizontalRuleRoundedIcon from '@mui/icons-material/HorizontalRuleRounded';
 
@@ -51,7 +51,7 @@ export default function Index(){
                             className={`icon-item ${selected.includes(emocion.id) ? 'selected' : ''}`}
                             onClick={() => toggleSeleccion(emocion.id)}
                             >
-                            <i className={emocion.icon}></i> {emocion.label}
+                                <i className={emocion.icon}></i> {emocion.label}
                             </div>
                         ))}
                         </div>

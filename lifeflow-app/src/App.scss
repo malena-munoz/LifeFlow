@@ -1,6 +1,6 @@
 $negro: #000000;
 $blanco: #FFFFFF;
-$gris: #B0B0B0;
+$gris: #DBDBDD;
 
 // Tonos de rosa
 $rosa-extra-claro: #FFF0F7;
@@ -22,8 +22,10 @@ $azul-extra-oscuro: #062A64;
 
 // Colores de estado
 $verde-exito: #4CAF50;
-$amarillo-advertencia: #FFC107;
-$rojo-error: #F44336;
+$amarillo: #FFC107;
+$amarillo-oscuro: #ddaa11;
+$rojo: #F44336;
+$rojo-oscuro: #c73b31;
 $azul-informacion: #2196F3;
 
 // ===============================================================================
@@ -65,13 +67,17 @@ $azul-informacion: #2196F3;
 }
 
 // ----------------------------------------------------------------------------
-//     CONTENEDOR DE RENDERIZADO
+//     ETIQUETAS SEMANTICAS
 // ----------------------------------------------------------------------------
 
 main {
     @include columna;
     min-height: 100vh;
     max-height: 100vh;
+}
+
+input {
+    border-color: $gris;
 }
 
 // ----------------------------------------------------------------------------
@@ -205,6 +211,15 @@ button {
             background-color: $rosa-extra-oscuro;
         }
     }
+
+    &.btn-blue {
+        background-color: $azul-muy-oscuro;
+        color: $blanco;
+
+        &:hover {
+            background-color: $azul-extra-oscuro;
+        }
+    }
 }
 
 article {
@@ -300,3 +315,203 @@ form {
     }
 }
 
+.icon-btn {
+    transition: all ease-in .2s;
+    border-radius: .25rem;
+    padding: .5rem;
+    cursor: pointer;
+
+    svg {
+        fill: $blanco !important;
+    }
+
+    &.edit-icon {
+        background-color: $amarillo;
+
+        &:hover {
+            background-color: $amarillo-oscuro;
+        }
+    }
+
+    &.delete-icon {
+        background-color: $rojo;
+
+        &:hover {
+            background-color: $rojo-oscuro;
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+//   Modales
+// ----------------------------------------------------------------------------
+
+.modal {
+
+    .modal-header {
+        justify-content: space-between;
+    }
+
+    .modal-title {
+        color: $rosa-oscuro;
+        font-weight: bold;
+    }
+}
+
+// Formulario de crear recordatorio
+#form-create-reminder {
+    @include columna;
+    gap: 1rem;
+}
+
+// ----------------------------------------------------------------------------
+//     Reminders
+// ----------------------------------------------------------------------------
+
+[page="reminders"] {
+    @include columna;
+
+    h1 {
+        color: $rosa-oscuro;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .dt-container {
+        @include columna;
+        flex: 1;
+        height: 100%;
+        padding: 2rem;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 0px 15px 0px;
+
+        .dt-layout-row {
+            
+            &:first-child {
+                margin-top: 0;
+                flex-direction: row-reverse;
+                gap: 4rem;
+
+                .dt-layout-cell {
+                    margin: 0;
+
+                    &.dt-layout-end {
+                        flex: 1;
+                    }
+                }
+            }
+
+            &:nth-child(3){
+                margin-bottom: 0;
+
+                .dt-layout-end {
+                    margin: 0;
+                    flex: 1;
+
+                    .dt-paging {
+                        flex: 1;
+
+                        nav {
+                            justify-content: center;
+                        }
+                    }
+                }
+            }
+
+            .dt-search {
+                @include fila;
+                align-items: center;
+                flex: 1;
+
+                label {
+                    height: 40px;
+                    margin-left: .5rem;
+                    position: absolute;
+                    display: flex;
+                    align-items: center;
+
+                    i {
+                        width: 1rem;
+
+                        &::before {
+                            font-size: inherit;
+                            line-height: inherit;       
+                        }
+                    }
+                }
+
+                input {
+                    width: 100%;
+                    height: 40px;
+                    margin: 0;
+                    padding: .5rem 1rem .5rem 2rem;
+                }
+            }
+
+            &.dt-layout-table {
+                flex: 1;
+                align-items: flex-start;
+
+                .dataTable {
+
+                    th {
+                        background-color: $azul-oscuro;
+                        color: $blanco;
+                        padding: .5rem 1rem;
+                    }
+
+                    td {
+                        padding: 1rem;
+                        background-color: $blanco;
+                        box-shadow: none;
+
+                        &:last-child {
+                            padding: 0;
+                        }
+                    }
+
+                    tr {
+                        border-color: $gris;
+                    }
+
+                    .form-check-input {
+                        width: 20px;
+                        height: 20px;
+                        vertical-align: text-top;
+                        cursor: pointer;
+                        margin: 0;
+
+                        &:focus {
+                            box-shadow: none;
+                        }
+
+                        &:checked {
+                            border-color: #64646f80;
+                            background-color: #64646f80;
+                        }
+                    }
+                }
+            }    
+        }
+    }
+
+    #reminders-panel > div {
+        flex: 1;
+    }
+
+    #add-reminder, #edit-reminder {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        
+        i {
+            line-height: 1;
+        }
+    }
+
+    // Contenedor de editar y vista previa de recordatorio
+    #reminder-editor {
+        @include columna;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 0px 15px 0px;
+        width: 700px;
+    }
+}
