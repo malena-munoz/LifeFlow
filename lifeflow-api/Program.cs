@@ -4,27 +4,26 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-string[] origins = builder.Configuration.GetValue<string>("Hosts")!.Split(",");
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirReact",
-            builder => builder.WithOrigins(origins) // React corre por default en este puerto
+            builder => builder.WithOrigins("http://localhost:3000") // React corre por default en este puerto
                               .AllowAnyMethod()
                               .AllowAnyHeader());
 });
+
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<LifeFlowContext>((serviceProvider, options) =>
 {
     IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
     options.UseSqlServer(builder.Configuration.GetConnectionString("LifeFlow"));
 });
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/
-builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
@@ -38,7 +37,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseRouting(); 
+
+app.UseCors("PermitirReact"); 
 
 app.UseAuthorization();
 
