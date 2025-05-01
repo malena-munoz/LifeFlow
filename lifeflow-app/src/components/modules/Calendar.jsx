@@ -16,7 +16,7 @@ export default function Calendar () {
     return (
         <div className="calendar-container">
             <div className="calendar-header">
-                <div class="d-flex justify-content-center align-items-end">
+                <div className="d-flex justify-content-center align-items-end">
                     <span className={`month ${compareMesSeleccionado(calendar_obj.anterior.mes)}`} 
                     onClick={() => setMesSeleccionado(calendar_obj.anterior)} 
                     month={calendar_obj.anterior.mes}>

@@ -1,5 +1,26 @@
 import axios from "axios";
 
+export function GoogleCalendarObject() {
+    return {
+        summary: "",
+        location: "",
+        description: "",
+        start: {
+            dateTime: "",
+            timeZone: ""
+        },
+        end: {
+            dateTime: "",
+            timeZone: ""
+        },
+        recurrence: [],
+        attendees: [],
+        reminders: {
+            useDefault: false,
+            overrides: []
+        }
+    };
+}
 
 export async function GoogleLogin(token, setLoginStatus) {
     try {

@@ -86,3 +86,23 @@ export function GooogleColors() {
         { value: 11, color: '#dc2127', label: 'Tomate' }
     ];
 }
+
+export function Filter1Recurrency() {
+    return [
+        { label: 'Diariamente', value: 'DAILY' },
+        { label: 'Semanalmente', value: 'WEEKLY' },
+        { label: 'Mensualmente', value: 'MONTHLY' },
+    ];
+}
+
+export function Filter2Recurrency() {
+    return [
+        { label: 'Lunes', value: 'MO' },
+        { label: 'Martes', value: 'TU' },
+        { label: 'Miércoles', value: 'WE' },
+        { label: 'Jueves', value: 'TH' },
+        { label: 'Viernes', value: 'FR' },
+        { label: 'Sábado', value: 'SA' },
+        { label: 'Domingo', value: 'SU' },
+    ];
+}

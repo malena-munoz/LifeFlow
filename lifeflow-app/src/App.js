@@ -6,9 +6,10 @@ import 'datatables.net-dt/js/dataTables.dataTables.min.js'
 // CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "@flaticon/flaticon-uicons/css/all/all.css";
+import 'datatables.net-dt/css/dataTables.dataTables.min.css'
 import './App.css';
 import './Calendar.css';
-import 'datatables.net-dt/css/dataTables.dataTables.min.css'
+
 
 
 function App() {

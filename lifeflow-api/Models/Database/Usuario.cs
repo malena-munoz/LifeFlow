@@ -14,6 +14,12 @@ namespace LifeFlow.Models.Database
         public Guid IdRol { get; set; }
         public virtual Rol? Rol { get; set; }
 
+        public static Usuario Desconocido = new Usuario
+        {
+            Identificador = "-1",
+            IdRol = Guid.NewGuid()
+        };
+
 
         //{
         //"sub": "105348146036563382953",

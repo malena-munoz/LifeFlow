@@ -26,7 +26,7 @@ namespace lifeflow_api.Controllers
             Usuario? usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Identificador.Equals(identificador));
 
-            return usuario != null ? usuario : NotFound();
+            return usuario != null ? usuario : Usuario.Desconocido;
         }
 
     }

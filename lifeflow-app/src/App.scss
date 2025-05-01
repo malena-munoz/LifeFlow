@@ -20,8 +20,30 @@ $azul-oscuro: #1976D2;
 $azul-muy-oscuro: #0D47A1;
 $azul-extra-oscuro: #062A64;
 
+$colores-rosa: (
+    extra-claro: #FFF0F7,
+    muy-claro:   #FFE6F0,
+    claro:       #FFC1E3,
+    medio:       #FF8CBF,
+    oscuro:      #FF4D94,
+    muy-oscuro:  #C2185B,
+    extra-oscuro:#8B0A36
+);
+
+// Tonos de azul
+$colores-azul: (
+    extra-claro: #F0FBFF,
+    muy-claro:   #E0F7FF,
+    claro:       #AEE4FF,
+    medio:       #64B5F6,
+    oscuro:      #1976D2,
+    muy-oscuro:  #0D47A1,
+    extra-oscuro:#062A64
+);
+
 // Colores de estado
-$verde-exito: #4CAF50;
+$verde: #4CAF50;
+$verde-oscuro: #428d45;
 $amarillo: #FFC107;
 $amarillo-oscuro: #ddaa11;
 $rojo: #F44336;
@@ -47,6 +69,35 @@ $azul-informacion: #2196F3;
     flex-direction: row;
 }
 
+// Generador de clases
+@each $nombre, $color in $colores-rosa {
+    .bg-rosa-#{$nombre} {
+        background-color: $color !important;
+    }
+
+    .txt-rosa-#{$nombre} {
+        color: $color !important;
+
+        &:hover {
+            color: $color;
+        }
+    }
+}
+
+@each $nombre, $color in $colores-azul {
+    .bg-azul-#{$nombre} {
+        background-color: $color !important;
+    }
+
+    .txt-azul-#{$nombre} {
+        color: $color !important;
+
+        &:hover {
+            color: $color;
+        }
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -61,7 +112,6 @@ $azul-informacion: #2196F3;
     }
 
     &:hover {
-        color: inherit;
         text-decoration: none;
     }
 }
@@ -340,6 +390,22 @@ form {
             background-color: $rojo-oscuro;
         }
     }
+
+    &.success-icon {
+        background-color: $verde;
+
+        &:hover {
+            background-color: $verde-oscuro;
+        }
+    }
+
+    &.blue-icon {
+        background-color: $azul-oscuro;
+
+        &:hover {
+            background-color: $azul-muy-oscuro;
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -362,11 +428,96 @@ form {
 #form-create-reminder {
     @include columna;
     gap: 1rem;
+
+    .form-control {
+        transition: all 100ms;
+        -webkit-transition: all 100ms;
+        border-radius: 0.25rem;
+        border-color: #cccccc;
+
+        &:focus {
+            outline: 0 !important;
+            transition: all 100ms;
+            background-color: hsl(0, 0%, 100%);
+            border-color: $azul-oscuro;
+            border-radius: 4px;
+            border-style: solid;
+            border-width: 1px;
+            box-shadow: 0 0 0 1px $azul-oscuro;
+        }
+
+        &.time-picker {
+            width: 4rem;
+        }
+    }
+
+    .form-check-input {
+        &:focus {
+            box-shadow: none;
+        }
+
+        &:checked {
+            background-color: $azul-medio;
+            border-color: $azul-medio;
+        }
+    }
+
+    .input-group {
+        gap: 1rem;
+
+        .btn {
+            padding: .5rem;
+            border-radius: 0.25rem;
+            border: none;
+        }
+    }
+
+    .sub-input {
+        border-left: 3px solid #cccccc;
+        padding-left: 1.5rem;
+    }
+
+    .btn-group {
+        gap: .25rem;
+
+        .btn {
+            border-radius: 0.25rem;
+            border: none;
+            background-color: $azul-oscuro;
+
+            &:hover {
+                background-color: $azul-muy-oscuro;
+            }
+
+            &.selected {
+                background-color: $azul-extra-oscuro;
+            }
+        }
+    }
+
+    .new-guest {
+        display: flex;
+        align-items: center;
+        background-color: $rosa-extra-oscuro;
+        width: fit-content;
+        color: $blanco;
+        padding: .5rem;
+        gap: .5rem;
+        border-radius: 0.25rem;
+
+        i {
+            cursor: pointer;
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
 //     Reminders
 // ----------------------------------------------------------------------------
+
+i {
+    line-height: 1;
+}
 
 [page="reminders"] {
     @include columna;
@@ -502,10 +653,6 @@ form {
         display: flex;
         align-items: center;
         gap: .5rem;
-        
-        i {
-            line-height: 1;
-        }
     }
 
     // Contenedor de editar y vista previa de recordatorio

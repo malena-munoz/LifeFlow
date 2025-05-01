@@ -1,7 +1,7 @@
 import Calendar from "../../modules/Calendar";
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../logic/Objects";
 import { useState } from "react";
-import HorizontalRuleRoundedIcon from '@mui/icons-material/HorizontalRuleRounded';
+import { HorizontalRuleRounded } from '@mui/icons-material';
 
 export default function Index(){
     const [selected, setSelected] = useState([]);
@@ -41,7 +41,7 @@ export default function Index(){
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Emociones</h5>
-                            <HorizontalRuleRoundedIcon/>
+                            <HorizontalRuleRounded/>
                             <span>¿Cómo te sientes?</span>
                         </div>
                         <div className="d-flex flex-row flex-wrap gap-2">
@@ -59,7 +59,7 @@ export default function Index(){
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Molestias</h5>
-                            <HorizontalRuleRoundedIcon/>
+                            <HorizontalRuleRounded/>
                             <span>¿Sientes dolor en alguna de estas zonas?</span>
                         </div>
                         <div className="d-flex flex-row flex-wrap gap-2">
@@ -77,7 +77,7 @@ export default function Index(){
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Síntomas</h5>
-                            <HorizontalRuleRoundedIcon/>
+                            <HorizontalRuleRounded/>
                             <span>¿Has sentido alguna de estas condiciones?</span>
                         </div>
                         <div className="d-flex flex-row flex-wrap gap-2">
@@ -95,7 +95,7 @@ export default function Index(){
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Fluido femenino</h5>
-                            <HorizontalRuleRoundedIcon/>
+                            <HorizontalRuleRounded/>
                             <span>¿Cómo era su aspecto?</span>
                         </div>
                         <div className="d-flex flex-row flex-wrap gap-2">
@@ -113,7 +113,7 @@ export default function Index(){
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Prueba de embarazo</h5>
-                            <HorizontalRuleRoundedIcon/>
+                            <HorizontalRuleRounded/>
                             <span>¿Cuál fue el resultado?</span>
                         </div>
                         <div className="d-flex flex-column flex-wrap gap-2">
