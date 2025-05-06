@@ -1,36 +1,35 @@
 import { useEffect, useState } from "react";
 import { IsNewUser } from '../logic/User'
 import Nav from '../modules/Nav';
+import Loader from '../modules/Loader';
 import Index from '../pages/main/Index';
-import Reminders from '../pages/main/Reminders';
+import Reminders from './reminders/Reminders';
 
 export default function Main(props) {
-    const [page, setPage] = useState(1);
-    const [newUser, setNewUser] = useState(null);
-
-    const user = props.user;
-    console.log(user);
+    const login = props.login;
     const setLoginStatus = props.setLoginStatus;
+    const [page, setPage] = useState(1);
 
     const renderPage = () => {
         switch(page){
             case 1:
-                return <Index />;
+                return <Index user={login.user} token={login.token}/>;
             case 2:
-                return <Reminders />;
+                return <Reminders user={login.user} token={login.token}/>;
             default:
-                return <Index />;
+                return <Index/>;
         }
     };
 
     useEffect(() => {
-        IsNewUser(user.sub);
+        IsNewUser(login.user.sub);
     }, []);
     
 
     return (
         <>
-            <Nav user={user} setLoginStatus={setLoginStatus} setPage={setPage}/>
+            <Nav user={login.user} setLoginStatus={setLoginStatus} setPage={setPage}/>
+            <Loader/>
             {renderPage()}
         </>
     );

@@ -60,14 +60,14 @@
 }
 
 .bg-rosa-muy-oscuro {
-  background-color: #C2185B !important;
+  background-color: #c2185b !important;
 }
 
 .txt-rosa-muy-oscuro {
-  color: #C2185B !important;
+  color: #c2185b !important;
 }
 .txt-rosa-muy-oscuro:hover {
-  color: #C2185B;
+  color: #c2185b;
 }
 
 .bg-rosa-extra-oscuro {
@@ -184,6 +184,13 @@ input {
   border-color: #DBDBDD;
 }
 
+i {
+  line-height: 1;
+}
+i::before {
+  display: block;
+}
+
 nav {
   height: 4rem;
   position: sticky;
@@ -273,6 +280,49 @@ nav .settings a {
 nav .settings a:hover {
   background-color: #C2185B;
   color: #FFFFFF !important;
+}
+
+#loader {
+  position: fixed;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+}
+#loader .spinner {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+#loader .spinner span {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  background-color: #FF4D94;
+  opacity: 0;
+}
+#loader .spinner span:nth-child(1) {
+  animation: fade 1s ease-in-out infinite;
+}
+#loader .spinner span:nth-child(2) {
+  animation: fade 1s ease-in-out 0.33s infinite;
+}
+#loader .spinner span:nth-child(3) {
+  animation: fade 1s ease-in-out 0.66s infinite;
+}
+@keyframes fade {
+  0%, 100% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
 }
 
 button {
@@ -368,12 +418,6 @@ form#daily-data {
   cursor: pointer;
   transition: all ease-in 0.2s;
 }
-.icon-item i {
-  line-height: 1;
-}
-.icon-item i::before {
-  vertical-align: top;
-}
 .icon-item.selected {
   background-color: #1976D2;
   color: #FFFFFF;
@@ -394,6 +438,12 @@ form#daily-data {
 }
 .icon-btn svg {
   fill: #FFFFFF !important;
+}
+.icon-btn .fi {
+  color: #FFFFFF !important;
+}
+.icon-btn[disabled] {
+  background-color: #b1b1b1 !important;
 }
 .icon-btn.edit-icon {
   background-color: #FFC107;
@@ -418,6 +468,12 @@ form#daily-data {
 }
 .icon-btn.blue-icon:hover {
   background-color: #0D47A1;
+}
+.icon-btn--single {
+  padding: 0;
+}
+.icon-btn--single.location-icon {
+  color: #F44336;
 }
 
 .modal .modal-header {
@@ -498,10 +554,6 @@ form#daily-data {
 }
 #form-create-reminder .new-guest i {
   cursor: pointer;
-}
-
-i {
-  line-height: 1;
 }
 
 [page=reminders] {
@@ -614,8 +666,11 @@ i {
   gap: 0.5rem;
 }
 [page=reminders] #reminder-editor {
-  display: flex;
-  flex-direction: column;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 0px 15px 0px;
   width: 700px;
+}
+[page=reminders] #reminder-editor .property-label {
+  color: #0D47A1;
+  font-size: 20px;
+  font-weight: bold;
 }/*# sourceMappingURL=App.css.map */

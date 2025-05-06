@@ -1,6 +1,6 @@
 import { CalendarObject, Days, IsCurrentDay } from "../logic/Date";
 import { useState, useMemo } from "react";
-import HorizontalRuleRoundedIcon from '@mui/icons-material/HorizontalRuleRounded';
+import { HorizontalRuleRounded } from '@mui/icons-material';
 
 export default function Calendar () {
 
@@ -23,14 +23,14 @@ export default function Calendar () {
                         {calendar_obj.anterior.nombre} 
                         <span className="year"> {calendar_obj.anterior.anio}</span>
                     </span>
-                    <HorizontalRuleRoundedIcon />
+                    <HorizontalRuleRounded />
                     <span className={`month ${compareMesSeleccionado(calendar_obj.actual.mes)}`} 
                     onClick={() => setMesSeleccionado(calendar_obj.actual)} 
                     month={calendar_obj.actual.mes}>
                         {calendar_obj.actual.nombre} 
                         <span className="year"> {calendar_obj.actual.anio}</span>
                     </span>
-                    <HorizontalRuleRoundedIcon />
+                    <HorizontalRuleRounded />
                     <span className={`month ${compareMesSeleccionado(calendar_obj.siguiente.mes)}`}
                     onClick={() => setMesSeleccionado(calendar_obj.siguiente)} 
                     month={calendar_obj.siguiente.mes}>
@@ -54,7 +54,7 @@ export default function Calendar () {
                     : 
                     (
                         <div className={`day ${IsCurrentDay(mesSeleccionado, day)}`}>
-                            <span class="day-number">{day}</span>
+                            <span className="day-number">{day}</span>
                         </div>
                     ) 
                 ))}

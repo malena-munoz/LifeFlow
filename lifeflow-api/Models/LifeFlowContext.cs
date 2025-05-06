@@ -1,4 +1,5 @@
 ﻿using LifeFlow.Models.Database;
+using lifeflow_api.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
@@ -25,6 +26,7 @@ namespace LifeFlow.Models
         public DbSet<Usuario> Usuarios { get; set; } = null!;
         public DbSet<Rol> Roles { get; set; } = null!;
         public DbSet<Etiqueta> Etiquetas { get; set; } = null!;
+        public DbSet<Recordatorio> Recordatorios { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -76,6 +78,19 @@ namespace LifeFlow.Models
                     .HasDefaultValue(null) 
                     .HasColumnType("int")
                     .HasColumnName("Intensidad"); 
+            });
+
+            modelBuilder.Entity<Recordatorio>(entity =>
+            {
+                entity.ToTable("Recordatorio");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.Identificador).HasColumnName("Identificador");
+
+                entity.Property(e => e.IdRecordatorio).HasColumnName("Id_Recordatorio");
             });
 
         }

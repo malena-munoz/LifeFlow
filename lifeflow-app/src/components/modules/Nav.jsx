@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import icono_app from '../../assets/img/lifeflow-full-filled.png';
 import titulo_app from '../../assets/img/lifeflow-text-rosa.png';
-import LogoutIcon from '@mui/icons-material/Logout';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import  { EditCalendar, Logout } from '@mui/icons-material';
 import { GoogleLogout } from '../logic/Google';
 
 export default function Nav(props) {
     const [iconClicked, setIconClicked] = useState(false);
     const user = props.user;
-
+    
     const toggleIconClicked = () => {
         setIconClicked(prev =>  prev === true ? false : true);
     };
@@ -34,8 +33,8 @@ export default function Nav(props) {
                     <img id="icono-perfil" className="rounded-circle" src={user.picture} alt="" />
                     {iconClicked && (
                         <div className="settings">
-                            <a><EditCalendarIcon/> Valores menstruales</a>
-                            <a onClick={() => GoogleLogout(props.setLoginStatus)}><LogoutIcon/> Cerrar sesión</a>
+                            <a><EditCalendar/> Valores menstruales</a>
+                            <a onClick={() => GoogleLogout(props.setLoginStatus)}><Logout/> Cerrar sesión</a>
                         </div>
                     )}
                 </div>

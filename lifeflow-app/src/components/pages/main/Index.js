@@ -119,23 +119,23 @@ export default function Index(){
                         <div className="d-flex flex-column flex-wrap gap-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-1"/>
-                                <label class="form-check-label" for="pregnancy-test-1"> No realizado </label>
+                                <label class="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
-                                <label class="form-check-label" for="pregnancy-test-2"> Positivo </label>
+                                <label class="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
-                                <label class="form-check-label" for="pregnancy-test-3"> Negativo </label>
+                                <label class="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
-                                <label class="form-check-label" for="pregnancy-test-4"> Línea débil </label>
+                                <label class="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
-                                <label class="form-check-label" for="pregnancy-test-5"> No válido </label>
+                                <label class="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using LifeFlow.Models;
+using lifeflow_api.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lifeflow_api.Controllers
@@ -27,12 +28,64 @@ namespace lifeflow_api.Controllers
             }));
         }
 
-        [HttpPost("create-event")]
-        public async Task<IActionResult> CreateEvent([FromHeader] string token, [FromBody] Event reminder)
+        [HttpGet("events")]
+        public async Task<IActionResult> GetEventsByIds([FromHeader] string token, [FromHeader] string identificador)
         {
-            CalendarService Servicio = await GetCalendarServiceAsync(token);
-            Event Evento = await Servicio.Events.Insert(reminder, "primary").ExecuteAsync();
-            return Ok(Evento);
+            try
+            {
+                // Obtén el servicio de Calendar
+                CalendarService Servicio = await GetCalendarServiceAsync(token);
+
+                // Obtener recordatorios y lista vacía para guardar los recordatorios en formato "Event"
+                List<string> Recordatorios = _context.Recordatorios
+                    .Where(c => c.Identificador.Equals(identificador)).Select(c => c.IdRecordatorio).ToList();
+
+                List<Event> Eventos = new List<Event>();
+
+                foreach (string Id in Recordatorios)
+                {
+                    Event Evento = await Servicio.Events.Get("primary", Id).ExecuteAsync();
+                    Eventos.Add(Evento);
+                }
+
+                return Ok(Eventos);
+            }
+            catch (Exception ex)
+            {
+                // Si ocurre un error, devolver BadRequest con el mensaje de error
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpPost("create-event")]  // CREA UN EVENTO EN EL CALENDARIO
+        public async Task<IActionResult> CreateEvent([FromHeader] string token, [FromHeader] string identificador, [FromBody] Event reminder)
+        {
+            try
+            {
+                // Creación de evento en Google Calendar
+                CalendarService Servicio = await GetCalendarServiceAsync(token);
+                Event Evento = await Servicio.Events.Insert(reminder, "primary").ExecuteAsync();
+
+                // Guardar ID del evento en la base de datos
+                Recordatorio Recordatorio = new Recordatorio
+                {
+                    Identificador = identificador,
+                    IdRecordatorio = Evento.Id
+                };
+                _context.Recordatorios.Add(Recordatorio);
+                _context.SaveChanges();
+
+                return Ok(Evento);
+            }
+            catch (Google.GoogleApiException ex)
+            {
+                return BadRequest(new { message = "Error al crear el evento en Google Calendar", details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocurrió un error inesperado", details = ex.Message });
+            }
         }
 
         [HttpPut("update-event/{reminder_id}")]
