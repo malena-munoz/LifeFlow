@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { GoogleCheckSession } from './logic/Google';
-import Main from './pages/Main';
-import Welcome from './pages/Welcome';
+import { GoogleCheckSession } from '../services/Google';
+import Main from '../pages/Main';
+import Welcome from '../pages/Welcome';
 
 export default function LifeFlow () {
     const [loginStatus, setLoginStatus] = useState(null);

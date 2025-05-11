@@ -5,6 +5,7 @@ using Google.Apis.Services;
 using LifeFlow.Models;
 using lifeflow_api.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace lifeflow_api.Controllers
 {
@@ -88,20 +89,68 @@ namespace lifeflow_api.Controllers
             }
         }
 
-        [HttpPut("update-event/{reminder_id}")]
-        public async Task<IActionResult> UpdateEvent(string reminder_id, [FromHeader] string token, [FromBody] Event reminder)
+        [HttpPut("edit-event/{reminder_id}")]
+        public async Task<IActionResult> EditEvent(string reminder_id, [FromHeader] string token, [FromHeader] string identificador, [FromBody] Event reminder)
         {
-            CalendarService Servicio = await GetCalendarServiceAsync(token);
-            Event Evento = await Servicio.Events.Update(reminder, "primary", reminder_id).ExecuteAsync();
-            return Ok(Evento);
+            try
+            {
+                CalendarService Servicio = await GetCalendarServiceAsync(token);
+                Event Evento = await Servicio.Events.Update(reminder, "primary", reminder_id).ExecuteAsync();
+                return Ok(Evento);
+            }
+            catch (Google.GoogleApiException ex)
+            {
+                int CodigoError = ex.Error.Code;
+                string MensajeError = "Error en Google Calendar API durante el proceso de editado.";
+                return BadRequest(new { message = MensajeError, details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocurrió un error inesperado", details = ex.Message });
+            }
+            finally
+            {
+                _context.SaveChanges();
+            }
         }
 
         [HttpDelete("delete-event/{reminder_id}")]
-        public async Task<IActionResult> DeleteEvent(string reminder_id, [FromHeader] string token)
+        public async Task<IActionResult> DeleteEvent(string reminder_id, [FromHeader] string token, [FromHeader] string identificador)
         {
-            CalendarService Servicio = await GetCalendarServiceAsync(token);
-            await Servicio.Events.Delete("primary", reminder_id).ExecuteAsync();
-            return NoContent();
+            Recordatorio Recordatorio = _context.Recordatorios
+                .FirstOrDefault(r => r.IdRecordatorio.Equals(reminder_id)) ?? new Recordatorio();
+
+            try
+            {
+                CalendarService Servicio = await GetCalendarServiceAsync(token);
+                await Servicio.Events.Delete("primary", reminder_id).ExecuteAsync();
+
+                _context.Recordatorios.Remove(Recordatorio);
+
+                return NoContent();
+            }
+            catch (Google.GoogleApiException ex)
+            {
+                int CodigoError = ex.Error.Code;
+                string MensajeError = "Error en Google Calendar API durante el proceso de borrado.";
+
+                if (CodigoError == 410)
+                {
+                    _context.Recordatorios.Remove(Recordatorio);
+                    MensajeError = "El evento ya estaba borrado de Google Calendar. Se borrará de la base de datos. Recarga para actualizar.";
+                }
+
+                return BadRequest(new { message = MensajeError, details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocurrió un error inesperado", details = ex.Message });
+            } 
+            finally 
+            {
+                _context.SaveChanges();
+            }
+
         }
 
     }

@@ -1,9 +1,9 @@
 import { Google } from '@mui/icons-material';
-import icono_app from '../../assets/img/lifeflow-full-filled.png';
-import titulo_app from '../../assets/img/lifeflow-text-rosa.png';
+import IconoLifeFlow from '../assets/img/lifeflow-full-filled.png';
+import TituloLifeFlow from '../assets/img/lifeflow-text-rosa.png';
 import { useGoogleLogin } from "@react-oauth/google";
 import { motion } from "framer-motion";
-import { GoogleLogin } from "../logic/Google";
+import { GoogleLogin } from "../services/Google";
 
 export default function Welcome(props) {
 
@@ -31,9 +31,9 @@ export default function Welcome(props) {
                     transition={{ duration: 1 }}  
                     className='vh-100 d-flex align-items-center justify-content-center gap-5'
                     >
-                <img src={icono_app}/>
+                <img src={IconoLifeFlow}/>
                     <div>
-                        <img src={titulo_app} className='w-75'/>
+                        <img src={TituloLifeFlow} className='w-75'/>
                         <h4>Tu app web para tu seguimiento de ciclos menstruales.</h4>
                     </div>
                 </motion.div>

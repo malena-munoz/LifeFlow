@@ -56,7 +56,7 @@ $azul-informacion: #2196F3;
     font-family: 'Lexend';
     font-style: normal;
     font-weight: normal;
-    src: url('./assets/font/lexend.woff') format('woff');
+    src: url('../font/lexend.woff') format('woff');
 }
 
 @mixin columna {
@@ -392,6 +392,41 @@ form {
     }
 }
 
+.expand-option {
+
+    &.expanded .expanded-container {
+        display: flex !important;
+    }
+
+    &.delete-icon .expanded-container {
+        background-color: $rojo;
+        position: absolute;
+        display: none;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: .25rem;
+        color: $blanco;
+        width: max-content;
+        margin-left: 2rem;
+        margin-top: calc(-32px - .5rem);
+        user-select: none;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background-color: $blanco;
+            color: $rojo-oscuro !important;
+            transition: all ease-in .2s;
+
+            &:hover {
+                background-color: $gris;
+            }
+        }
+    }
+}
+
 .icon-item {
     color: $azul-oscuro;
     border: 2px solid $azul-oscuro;
@@ -430,7 +465,7 @@ form {
         fill: $blanco !important;
     }
 
-    .fi {
+    > .fi {
         color: $blanco !important;
     }
 
@@ -476,8 +511,13 @@ form {
         &.location-icon {
             color: $rojo;
         }
+
+        &.calendar-icon {
+            color: $rosa-medio;
+        }
     }
 }
+
 
 // ----------------------------------------------------------------------------
 //   Modales
@@ -565,19 +605,35 @@ form {
             }
         }
     }
+}
 
-    .new-guest {
-        display: flex;
-        align-items: center;
-        background-color: $rosa-extra-oscuro;
-        width: fit-content;
-        color: $blanco;
+.new-guest {
+    display: flex;
+    align-items: center;
+    background-color: $rosa-extra-oscuro;
+    width: fit-content;
+    color: $blanco;
+    padding: .5rem;
+    gap: .5rem;
+    border-radius: 0.25rem;
+
+    i {
+        cursor: pointer;
+    }
+}
+
+.mini-table {
+    tr {
+        border: 2px solid $rosa-muy-oscuro
+    }
+
+    td {
         padding: .5rem;
-        gap: .5rem;
-        border-radius: 0.25rem;
+        text-align: left;
 
-        i {
-            cursor: pointer;
+        &.td-label {
+            background-color: $rosa-muy-oscuro;
+            color: $blanco;
         }
     }
 }
@@ -662,6 +718,7 @@ form {
                     height: 40px;
                     margin: 0;
                     padding: .5rem 1rem .5rem 2rem;
+                    border-color: #cccccc;
                 }
             }
 
@@ -675,12 +732,14 @@ form {
                         background-color: $azul-oscuro;
                         color: $blanco;
                         padding: .5rem 1rem;
+                        text-align: left !important;
                     }
 
                     td {
                         padding: 1rem;
                         background-color: $blanco;
                         box-shadow: none;
+                        text-align: left !important;
 
                         &:last-child {
                             padding: 0;
@@ -689,6 +748,34 @@ form {
 
                     tr {
                         border-color: $gris;
+                    }
+
+                    .dt-empty {
+                        padding: 1rem 0 !important;
+                        font-weight: bold;
+                        color: $rojo-oscuro;
+                    }
+
+                    .tr-selectable {
+                        cursor: pointer;
+
+                        td {
+                            transition: all ease-in .2s;
+                        }
+
+                        &:hover td{
+                            background-color: $azul-extra-claro;
+                        }
+
+                        &.tr-selected {
+                            td {
+                                background-color: $azul-claro; 
+                            }  
+
+                            &:hover td {
+                                background-color: $rosa-claro;
+                            }
+                        }
                     }
 
                     .form-check-input {

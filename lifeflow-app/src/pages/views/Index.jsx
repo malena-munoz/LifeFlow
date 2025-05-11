@@ -1,5 +1,5 @@
-import Calendar from "../../modules/Calendar";
-import { Emotions, BodyParts, Symptoms, FemFluid } from "../../logic/Objects";
+import Calendar from "../../components/custom/Calendar";
+import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
 import { useState } from "react";
 import { HorizontalRuleRounded } from '@mui/icons-material';
 

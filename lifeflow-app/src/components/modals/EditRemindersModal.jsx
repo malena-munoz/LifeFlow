@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import * as bootstrap from 'bootstrap';
-
-import { CreateGoogleReminder } from '../../../logic/Google';
-
-import { GooogleColors, Filter1Recurrency, Filter2Recurrency } from '../../../logic/Objects';
+import { GetReminderInfoToEdit } from '../../services/Methods';
+import { EditGoogleReminder } from '../../services/Google';
+import { GooogleColors, Filter1Recurrency, Filter2Recurrency } from '../../services/Objects';
 import { Modal, ModalBody, ModalHeader, ModalFooter, ModalTitle, Form, Button, ButtonGroup} from 'react-bootstrap';
-import { Close, QueryBuilderOutlined, Circle, AddRounded, SaveRounded, InfoOutlined } from '@mui/icons-material'; 
+import { Close, QueryBuilderOutlined, Circle, AddRounded, SaveRounded, InfoOutlined, HorizontalRuleRounded } from '@mui/icons-material'; 
 
 
-export default function RemindersModal(props){
+export default function EditRemindersModal(props){
     // Datos del usuario
     const user = props.user;
     const token = props.token;
+    const selectedReminder = props.selectedReminder;
 
-    const [selectedInputs, setSelectedInputs] = useState([]);  // INPUTS OPCIONALES
+    const [infoReminder, setInfoReminder] = useState(null);
 
-    // Inputs de formulario
+    // ☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰
+    //      PROPIEDADES DEL FORMULARIO
+    // ☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰
+
     const [formTitle, set_FormTitle] = useState('');  // TITULO
     const [formLocation, set_FormLocation] = useState('');  // UBICACION
     const [formColor, set_FormColor] = useState('');  // COLOR
@@ -25,8 +28,11 @@ export default function RemindersModal(props){
     const [formDate, set_FormDate] = useState(new Date().toISOString().slice(0, 16));  // FECHA 
     const [formHours, set_FormHours] = useState(1);  // DURACION -> HORAS
     const [formMinutes, set_FormMinutes] = useState(0);  // DURACION -> MINUTOS
+    const [displayFormFrequency, set_DisplayFormFrequency] = useState(false);  // VISTA DE LA FRECUENCIA
     const [formFrequency, set_FormFrequency] = useState('');  // FRECUENCIA
     const [formDaysWeek, set_FormDaysWeek] = useState([]);  // DIAS DE LA SEMANA
+    const [formDurationFrequencyInfinite, set_FormDurationFrequencyInfinite] = useState(true);  // VISTA DE LA DURACION DE LA FRECUENCIA
+    const [formDurationFrequency, set_FormDurationFrequency] = useState('');  // DURACION DE FRECUENCIA
 
     // Construir objeto recordatorio
     const buildReminder = () => {
@@ -54,8 +60,20 @@ export default function RemindersModal(props){
                 ]
             },
         };
-        //console.log(formGuests);
-        CreateGoogleReminder(token, reminder, user.sub);
+
+        if (displayFormFrequency) {;
+            let recurrencia_string = `RRULE:FREQ=${formFrequency};`;
+
+            if (formFrequency == 'WEEKLY' && formDaysWeek.length > 0) {
+                recurrencia_string += `BYDAY=${String(formDaysWeek.join(", "))};`;
+            }
+            if (formDurationFrequencyInfinite == false) {
+                recurrencia_string += `COUNT=${formDurationFrequency};`;
+            }
+
+            reminder.recurrence = [recurrencia_string];
+        }
+        EditGoogleReminder(selectedReminder.id, token, reminder, user.sub);
     }
 
     // Control del correo
@@ -132,21 +150,6 @@ export default function RemindersModal(props){
         });
     };
 
-    const toggleSelectedInput = (e) => {
-        let id = e.getAttribute('id');
-        
-        setSelectedInputs((prevSelected) => {
-            if (prevSelected.includes(id)) {
-                // Si ya está, lo quitamos
-                return prevSelected.filter((v) => v !== id);
-            } else {
-                toggleRecurrencyInfo(document.getElementById('filter-1-recurrency').value);
-                // Si no está, lo agregamos
-                return [...prevSelected, id];
-            }
-        });
-    };
-
     // Cambio en el valor de días de la semana seleccionados
     const toggleSelectedDays = (e) => {
         let value = e.getAttribute('value');
@@ -196,11 +199,39 @@ export default function RemindersModal(props){
         </div>
     );
 
+    useEffect(() => {
+        if (user && selectedReminder) {
+            const reminderData = GetReminderInfoToEdit(user, selectedReminder);
+            setInfoReminder(reminderData);
+        }
+    }, [user, selectedReminder]);
+
+    useEffect(() => {
+        if (infoReminder) {
+            set_FormTitle(infoReminder.summary || '');
+            set_FormLocation(infoReminder.location || '');
+            set_FormColor(infoReminder.colorId || '');
+            set_FormDescription(infoReminder.description || '');
+            set_FormGuests(infoReminder.attendees || []);
+            set_FormDate(infoReminder.start || new Date().toISOString().slice(0, 16));
+            set_FormHours(infoReminder.hours || 1);
+            set_FormMinutes(infoReminder.minutes || 0);
+            set_DisplayFormFrequency(infoReminder.display_frequency || false);
+            set_FormFrequency(infoReminder.frequency || '');
+            set_FormDaysWeek(infoReminder.days_week || []);
+            set_FormDurationFrequencyInfinite(infoReminder.frequency_infinite || true);
+            set_FormDurationFrequency(infoReminder.count || '');
+
+            console.log("INFO REMINDER", infoReminder);
+        }
+    }, [infoReminder]);
+
+
     return (
         <Modal show={props.display} centered='true' dialogClassName='modal-xl modal-dialog-scrollable'>
             {/* ---------------------------------------------------------------- */}
             <ModalHeader>
-                <ModalTitle>Crear recordatorio</ModalTitle>
+                <ModalTitle>Editar recordatorio '{formTitle}'</ModalTitle>
                 <Close onClick={() => props.setDisplay(false)}/>
             </ModalHeader>
             {/* ---------------------------------------------------------------- */}
@@ -211,6 +242,7 @@ export default function RemindersModal(props){
                     <Form.Group controlId="title" className='d-flex flex-column'>
                         <Form.Label className='mb-2'>Título</Form.Label>
                         <Form.Control 
+                        defaultValue={formTitle}
                         type='text' 
                         placeholder='Escribe un título'
                         onChange={(e) => set_FormTitle(e.target.value)}>
@@ -224,6 +256,7 @@ export default function RemindersModal(props){
                             options={GooogleColors()}
                             getOptionLabel={getOptionLabel}
                             isSearchable={false}
+                            defaultValue={formColor}
                             id='color-picker'
                             placeholder="Selecciona un color"
                             noOptionsMessage={() => "No hay opciones"}
@@ -236,6 +269,7 @@ export default function RemindersModal(props){
                     <Form.Group controlId="location" className='d-flex flex-column'>
                         <Form.Label className='mb-2'>Ubicación</Form.Label>
                         <Form.Control 
+                        defaultValue={formLocation}
                         type='text' 
                         placeholder='Escribe una ubicación donde dará lugar el recordatorio (casa, oficina, centro de salud...)'
                         onChange={(e) => set_FormLocation(e.target.value)}></Form.Control>
@@ -247,6 +281,7 @@ export default function RemindersModal(props){
                         <Form.Control 
                         id="description" 
                         as='textarea' 
+                        defaultValue={formDescription}
                         placeholder='Escribe un texto que describa el evento.' multiline
                         onChange={(e) => set_FormDescription(e.target.value)}/>
                     </Form.Group>
@@ -261,12 +296,30 @@ export default function RemindersModal(props){
                             placeholder="Escriba los correos invitados al evento." 
                             aria-describedby="add-guest" id='guest'/>
                             <button 
+                            disabled
                             class="btn icon-btn blue-icon" 
                             type="button" 
                             id="add-guest" 
                             onClick={() => handleGuests()}><AddRounded/></button>
                         </div>
-                        <div className='d-flex flex-row flex-wrap gap-2 mt-2' id='guest-list'></div>
+                        <div className='d-flex flex-row flex-wrap gap-2 mt-2' id='guest-list'>
+                            {formGuests !== undefined ?
+                                formGuests.length > 0 ?
+                                    formGuests.map((att) => {
+                                    return <span className='new-guest btn-pink'>
+                                        {att}
+                                        <i className="fi fi-rr-cross" onClick={(e) => {
+                                            e.target.parentElement.remove();
+                                            toggleGuests(att);
+                                        }}></i>
+                                    </span>
+                                })
+                                :
+                                <></>
+                            : 
+                                <></>
+                            }
+                        </div>
                     </Form.Group>
 
                     {/* --- INICIO + DURACION ------------------------------------------------------------- */}
@@ -283,11 +336,11 @@ export default function RemindersModal(props){
                             <div className='d-flex align-items-center gap-2'>
                                 <QueryBuilderOutlined/>
                                 <Form.Control id='hours' type='number' 
-                                min={1} max={23} defaultValue={1} 
+                                min={1} max={23} defaultValue={formHours} 
                                 className='time-picker' onChange={(e) => set_FormHours(parseInt(e.target.value))}></Form.Control>
                                 <span>h</span>
                                 <Form.Control id='minutes' type='number' 
-                                min={0} max={45} step={15} defaultValue={0} 
+                                min={0} max={45} step={15} defaultValue={formMinutes} 
                                 className='time-picker' onChange={(e) => set_FormMinutes(parseInt(e.target.value))}></Form.Control>
                                 <span>min</span>
                             </div>
@@ -298,23 +351,41 @@ export default function RemindersModal(props){
                     <Form.Group controlId="recurrency" className='d-flex flex-column gap-2'>
                         <div className='d-flex flex-row align-items-center gap-2'>
                             <input className="form-check-input m-0" type="checkbox" 
-                            value="" id="check-recurrency" onChange={(e) => toggleSelectedInput(e.target)}/>
+                            value="" id="check-recurrency" 
+                            onChange={() => set_DisplayFormFrequency((prevSelected) => prevSelected == true ? false : true)}/>
                             <Form.Label className='m-0'>¿El recordatorio se va a repetir?</Form.Label>
                         </div>
                         <div className={`flex-column align-items-start gap-3
-                            ${selectedInputs.includes('check-recurrency') ? 'd-flex' : 'd-none'}`}>
-                            <select id='filter-1-recurrency' className='form-control form-select' 
+                            ${displayFormFrequency ? 'd-flex' : 'd-none'}`}>
+                            <select id='filter-1-recurrency' className='form-control form-select' defaultValue={formFrequency}
                             onChange={(e) => {toggleRecurrencyInfo(e.target.value);}}>
                                 {Filter1Recurrency().map((opt) => (
                                     <option value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
+                            <div className='sub-input d-flex flex-column gap-2'>
+                                <Form.Label className='m-0'>¿Cuántas veces quieres que se repita el recordatorio?</Form.Label> 
+                                <div className='d-flex flex-row align-items-center gap-2'>
+                                    <input className="form-check-input m-0" type="checkbox" 
+                                    value="" id="check-count" checked={formDurationFrequencyInfinite}
+                                    onChange={() => set_FormDurationFrequencyInfinite((prevSelected) => prevSelected == true ? false : true)}/>
+                                    <span>Indefinido</span>
+                                    <div className={`gap-2 align-items-center ${formDurationFrequencyInfinite ? 'd-none' : 'd-flex'}`}>
+                                        <HorizontalRuleRounded/>
+                                        <Form.Control id='hours' type='number' 
+                                        min={1} defaultValue={formDurationFrequency} 
+                                        className='time-picker' onChange={(e) => set_FormDurationFrequency(parseInt(e.target.value))}>
+                                        </Form.Control>
+                                        <span>días</span>
+                                    </div>
+                                </div>
+                            </div>
                             <div id='filter-2-div' 
                             className={`flex-column align-items-start gap-2 sub-input ${formFrequency === 'WEEKLY' ? 'd-flex' : 'd-none'}`}> 
                                 <Form.Label className='m-0'>¿Cada cuántos días se repite?</Form.Label>                  
                                 <ButtonGroup>
                                     {Filter2Recurrency().map((opt) => (
-                                        <Button 
+                                        <Button className={`${formDaysWeek.includes(opt.value) ? 'selected' : ''}`}
                                         onClick={(e) => {toggleSelectedDays(e.target);}} 
                                         variant="secondary" 
                                         value={opt.value}>{opt.label}</Button>

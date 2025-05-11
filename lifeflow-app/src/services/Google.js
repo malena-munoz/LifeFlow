@@ -60,10 +60,41 @@ export async function CreateGoogleReminder(token, reminder, identifier) {
             },
             body: JSON.stringify(reminder)
         });
-        const data = await response.json();
-        notyf.success("Evento creado con éxito.");
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            notyf.error(`Error del servidor (${response.status}): ${errorText}`);
+            return;
+        }
+        
+        notyf.success("Recordatorio creado con éxito. Recarga la página para reflejar los cambios.");
     } catch (error) {
-        notyf.error(error.message);
+        notyf.error("No se ha guardado el recordatorio debido a un error durante el proceso.");
+    }
+}
+
+export async function EditGoogleReminder(reminder_id, token, reminder, identifier) {
+    const notyf = new Notyf();
+    try {
+        const response = await fetch(`https://localhost:7245/api/google-calendar/edit-event/${reminder_id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "token": token,
+                "identificador": identifier
+            },
+            body: JSON.stringify(reminder)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            notyf.error(`Error del servidor (${response.status}): ${errorText}`);
+            return;
+        }
+        
+        notyf.success("Recordatorio editado con éxito. Recarga la página para reflejar los cambios.");
+    } catch (error) {
+        notyf.error("No se ha editado el recordatorio debido a un error durante el proceso.");
     }
 }
 
@@ -83,5 +114,28 @@ export async function GetGoogleReminders(token, identifier) {
     } catch (error) {
         notyf.error(error.message);
         return {};
+    }
+}
+
+export async function DeleteGoogleReminder(reminder_id, token, identifier) {
+    const notyf = new Notyf();
+    try {
+        const response = await fetch(`https://localhost:7245/api/google-calendar/delete-event/${reminder_id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "token": token,
+                "identificador": identifier
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            notyf.error(`Error del servidor (${response.status}): ${errorText}`);
+            return;
+        }
+        notyf.success("Recordatorio borrado. Recarga la página para reflejar los cambios.");
+    } catch (error) {
+        notyf.error(error.message);
     }
 }

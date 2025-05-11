@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import icono_app from '../../assets/img/lifeflow-full-filled.png';
-import titulo_app from '../../assets/img/lifeflow-text-rosa.png';
+import IconoLifeFlow from '../../assets/img/lifeflow-full-filled.png';
+import TituloLifeFlow from '../../assets/img/lifeflow-text-rosa.png';
 import  { EditCalendar, Logout } from '@mui/icons-material';
-import { GoogleLogout } from '../logic/Google';
+import { GoogleLogout } from '../../services/Google';
 
 export default function Nav(props) {
     const [iconClicked, setIconClicked] = useState(false);
@@ -15,8 +15,8 @@ export default function Nav(props) {
     return (
         <nav>
             <div className="col d-flex align-items-center justify-content-start gap-3">
-                <img id="icono-app" src={icono_app} alt="" />
-                <img id="titulo-app" src={titulo_app} alt="" />
+                <img id="icono-app" src={IconoLifeFlow} alt="" />
+                <img id="titulo-app" src={TituloLifeFlow} alt="" />
             </div>
             <div className="col d-flex align-items-center justify-content-center gap-4">
                 <ul>

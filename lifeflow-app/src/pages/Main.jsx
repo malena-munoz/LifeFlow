@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { IsNewUser } from '../logic/User'
-import Nav from '../modules/Nav';
-import Loader from '../modules/Loader';
-import Index from '../pages/main/Index';
-import Reminders from './reminders/Reminders';
+import { IsNewUser } from '../services/User'
+import Loader from '../components/custom/Loader';
+import Nav from '../components/custom/Nav';
+import Index from './views/Index';
+import Reminders from './views/Reminders';
 
 export default function Main(props) {
     const login = props.login;
