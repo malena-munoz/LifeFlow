@@ -20,7 +20,7 @@ comparaciones entre los datos registrados del usuario.
   <br>
   <b>🌐 Servicios:</b> Google API (Oauth2 y servicios de aplicaciones de Google), API REST.
   <br>
-  <b>🖼️ Diseño</b> Interfaz minimalista y moderna creada desde 0, con la ayuda de Bootstrap, librerías de iconos e imágenes creadas/editadas con GIMP.
+  <b>🖼️ Diseño:</b> Interfaz minimalista y moderna creada desde 0, con la ayuda de Bootstrap, librerías de iconos e imágenes creadas/editadas con GIMP.
 
 ---
 
