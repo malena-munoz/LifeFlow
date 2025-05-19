@@ -19,24 +19,12 @@ comparaciones entre los datos registrados del usuario.
   <b>⚙️ Back-end:</b> .NET Web API, SQL Server
   <br>
   <b>🌐 Servicios:</b> Google API (Oauth2 y servicios de aplicaciones de Google)
+  <br>
+  <b>🎨 Diseño</b> Interfaz minimalista y moderna creada desde 0, con la ayuda de Bootstrap, librerías de iconos e imágenes creadas/editadas con GIMP.
 
 ---
 
 ## Dependencias
 El proyecto necesita de las siguientes dependencias vía NPM para que sea operativo:
 
-    npm i react
-    npm i axios
-    npm i bootstrap
-    npm i datatables.net-dt
-    npm i datatables.net-react
-    npm i @mui/icons-material
-    npm i @mui/material
-    npm i @flaticon/flaticon-uicons
-    npm i @emotion/styled
-    npm i @emotion/react
-    npm i @react-oauth/google
-    npm i @testing-library/dom
-    npm i @testing-library/jest-dom
-    npm i @testing-library/react
-    npm i @testing-library/user-event
+    npm install --legacy-peer-deps
