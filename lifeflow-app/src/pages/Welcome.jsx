@@ -4,8 +4,10 @@ import TituloLifeFlow from '../assets/img/lifeflow-text-rosa.png';
 import { useGoogleLogin } from "@react-oauth/google";
 import { motion } from "framer-motion";
 import { GoogleLogin } from "../services/Google";
+import { Notyf } from 'notyf';
 
 export default function Welcome(props) {
+    const notyf = new Notyf();
 
     const login = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -15,6 +17,7 @@ export default function Welcome(props) {
         onError: () => {
             props.setLoginStatus(null);
             props.setToken(null);
+            notyf.error("Error durante el inicio de sesión.");
         },
         redirectUri: "http://localhost:3000",
         scope: "https://www.googleapis.com/auth/calendar",

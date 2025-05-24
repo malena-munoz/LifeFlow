@@ -2,12 +2,19 @@ import Calendar from "../../components/custom/Calendar";
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
 import { useState } from "react";
 import { HorizontalRuleRounded } from '@mui/icons-material';
+import { Form } from 'react-bootstrap';
 
-export default function Index(){
+export default function Index(props){
+    // Datos del usuario
+    const user = props.user;
+    const token = props.token;
+
     const [selected, setSelected] = useState([]);
     const [bodyParts, setBodyParts] = useState([]);
     const [symtoms, setSymtoms] = useState([]);
     const [fluidoFemenino, setFluidoFemenino] = useState([]);
+    const [formNotes, setFormNotes] = useState('');
+
 
     const toggleSeleccion = (id) => {
         setSelected(prev =>
@@ -139,10 +146,21 @@ export default function Index(){
                             </div>
                         </div>
                     </div>
+                    <div className="form-property property-contained mb-4">
+                        <div className="d-flex flex-row gap-1">
+                            <h5>Notas</h5>
+                        </div>
+                        <div className="d-flex flex-row flex-wrap gap-2">
+                            <Form.Control 
+                            id="notes" 
+                            as='textarea' 
+                            placeholder='Escribe alguna nota adicional.' 
+                            multiline
+                            onChange={(e) => setFormNotes(e.target.value)}/>
+                        </div>
+                    </div>
                 </form>
                 <button id="save-day-stats" className="btn-pink">Guardar cambios</button>
-                
-
             </div>
         </article>
     );

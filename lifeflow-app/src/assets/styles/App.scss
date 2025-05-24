@@ -453,6 +453,11 @@ form {
     &:hover {
         background-color: $azul-muy-claro;
     }
+
+    .MuiSvgIcon-root {
+        height: 20px;
+        width: auto;
+    }
 }
 
 .icon-btn {
@@ -540,7 +545,10 @@ form {
     @include columna;
     gap: 1rem;
 
-    .form-control {
+    
+}
+
+.form-control {
         transition: all 100ms;
         -webkit-transition: all 100ms;
         border-radius: 0.25rem;
@@ -605,7 +613,6 @@ form {
             }
         }
     }
-}
 
 .new-guest {
     display: flex;
@@ -751,6 +758,7 @@ form {
                     }
 
                     .dt-empty {
+                        text-align: center !important;
                         padding: 1rem 0 !important;
                         font-weight: bold;
                         color: $rojo-oscuro;

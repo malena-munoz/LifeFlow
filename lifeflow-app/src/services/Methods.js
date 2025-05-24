@@ -54,12 +54,13 @@ export function GetInformationRRULE(reminder, default_values = false) {
         let rrule_frequency = rrule.options.freq == RRule.DAILY ? "Diaria" : 
             rrule.options.freq == RRule.WEEKLY ? "Semanal" :
             rrule.options.freq == RRule.MONTHLY ? "Mensual" : "???";
-            
-        let rrule_daysweek = rrule.options.byweekday.map(day => Filter2Recurrency()[day] ? Filter2Recurrency()[day].label : '???');
+        
+            console.log(rrule.options.byweekday);
+        let rrule_daysweek = rrule.options.byweekday != null ? rrule.options.byweekday.map(day => Filter2Recurrency()[day] ? Filter2Recurrency()[day].label : '???') : [];
 
         return {
             frequency: default_values ? Filter1Recurrency()[Math.abs(rrule.options.freq-3)]?.value : rrule_frequency,
-            days_week: default_values ? rrule.options.byweekday.map(day => Filter2Recurrency()[day]?.value) : rrule_daysweek,
+            days_week: default_values ? rrule?.options?.byweekday?.map(day => Filter2Recurrency()[day]?.value) : rrule_daysweek,
             count: rrule.options.count
         }
     } else {
@@ -92,4 +93,11 @@ export function GetReminderInfoToEdit(user, reminder) {
     };
 
     return info_reminder
+}
+
+export function GetDaysOfPreviousMonth() {
+    const today = new Date();
+    // El día 0 del mes actual es el último día del mes anterior
+    const lastDayPrevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    return lastDayPrevMonth.getDate();
 }

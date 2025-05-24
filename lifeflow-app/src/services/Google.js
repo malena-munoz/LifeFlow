@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Notyf } from 'notyf';
 
+const notyf = new Notyf();
+
 export async function GoogleLogin(token, setLoginStatus) {
     try {
         // 1. Obtener el access_token
@@ -23,6 +25,29 @@ export async function GoogleLogin(token, setLoginStatus) {
     } catch (err) {
         localStorage.removeItem("login-session");
         setLoginStatus(null);
+    }
+}
+
+export async function GoogleFirstLogin(identifier, cycle) {
+    try {
+        const response = await fetch(`https://localhost:7245/api/user/first-login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "identificador": identifier
+            },
+            body: JSON.stringify(cycle)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            notyf.error(`Error del servidor (${response.status}): ${errorText.message}`);
+            return;
+        }
+        
+        notyf.success("Datos guardados. Puedes editarlos en la opción de valores menstruales haciendo clic en el usuario.");
+    } catch (error) {
+        notyf.error("No se ha guardado los datos debido a un error durante el proceso.");
     }
 }
 
@@ -49,7 +74,6 @@ export function GoogleCheckSession(setLoginStatus) {
 }
 
 export async function CreateGoogleReminder(token, reminder, identifier) {
-    const notyf = new Notyf();
     try {
         const response = await fetch(`https://localhost:7245/api/google-calendar/create-event`, {
             method: "POST",

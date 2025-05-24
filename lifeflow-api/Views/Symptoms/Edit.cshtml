@@ -1,0 +1,54 @@
+﻿@model lifeflow_api.Models.Database.Sintomas
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Sintomas</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="PruebaEmbarazo" class="control-label"></label>
+                <input asp-for="PruebaEmbarazo" class="form-control" />
+                <span asp-validation-for="PruebaEmbarazo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Emociones" class="control-label"></label>
+                <input asp-for="Emociones" class="form-control" />
+                <span asp-validation-for="Emociones" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SintomasCuerpo" class="control-label"></label>
+                <input asp-for="SintomasCuerpo" class="form-control" />
+                <span asp-validation-for="SintomasCuerpo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Molestias" class="control-label"></label>
+                <input asp-for="Molestias" class="form-control" />
+                <span asp-validation-for="Molestias" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FluidoFemenino" class="control-label"></label>
+                <input asp-for="FluidoFemenino" class="form-control" />
+                <span asp-validation-for="FluidoFemenino" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

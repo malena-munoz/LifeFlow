@@ -12,45 +12,42 @@ import { ReminderButtonOptions } from '../../services/HtmlCreator';
 export default function RemindersTable(props){
     const user = props.user;
     const token = props.token;
+
+    // Lista de recordatorios
+    const reminders = props.reminders;
+    const [remindersRow, setRemindersRow] = useState([]);
+
     const selectedReminder = props.selectedReminder;
     const setSelectedReminder = props.setSelectedReminder;
 
     const displayEditReminderModal = props.displayEditModal;
     const setDisplayEditReminderModal = props.setDisplayEditModal;
     
-    const rawRemindersReference = React.useRef([]);
-    const [reminders, setReminders] = useState([]);
 
     useEffect(() => {
-        async function fetchReminders() {
-            const data = await GetGoogleReminders(token, user.sub);
-            let data_display = [];
-            if (Array.isArray(data)) {
-                data_display = data.map(item => {
+        let data_display = [];
+        if (Array.isArray(reminders.current)) {
+            data_display = reminders.current.map(item => {
 
-                    let circle = document.createElement('i');
-                    circle.className = 'fi fi-ss-circle';
-                    circle.style.color = GooogleColors().find(c => c.value == item.colorId).color;
-    
-                    let obj = [
-                        circle,
-                        String(item.summary), 
-                        SpanishDateString(item.start.dateTime, true), 
-                        SpanishDateString(item.created),
-                        ReminderButtonOptions(item.id, token, user.sub, setDisplayEditReminderModal),
-                        item.id
-                    ];
-                    
-                    return obj;
-                });
-            }
-            // Aquí se actualiza el estado para los recordatorios visuales
-            setReminders(data_display);
-            // Aquí se actualiza el estado para los recordatorios crudos (originales)
-            rawRemindersReference.current = data;
+                let circle = document.createElement('i');
+                circle.className = 'fi fi-ss-circle';
+                circle.style.color = GooogleColors().find(c => c.value == item.colorId).color;
+
+                let obj = [
+                    circle,
+                    String(item.summary), 
+                    SpanishDateString(item.start.dateTime, true), 
+                    SpanishDateString(item.created),
+                    ReminderButtonOptions(item.id, token, user.sub, setDisplayEditReminderModal),
+                    item.id
+                ];
+                
+                return obj;
+            });
         }
-        fetchReminders();
-    }, [token, user.sub]);
+        // Aquí se actualiza el estado para los recordatorios visuales
+        setRemindersRow(data_display);
+    }, []);
     
     useEffect(() => {
         const btn = document.getElementById("add-reminder");
@@ -137,7 +134,7 @@ export default function RemindersTable(props){
                 row.querySelector('.td-options > div').classList.remove('d-none');
                 row.querySelector('.td-options > div').classList.add('d-flex');
         
-                const reminder = rawRemindersReference.current.find(r => r.id === data[5]) ?? null;
+                const reminder = reminders.current.find(r => r.id === data[5]) ?? null;
                 setSelectedReminder(reminder);
             });
         }        
@@ -151,7 +148,7 @@ export default function RemindersTable(props){
             id="reminder-table"      
             className="display" 
             options={options}
-            data={reminders}>
+            data={remindersRow}>
                 <thead>
                     <tr>
                         <th></th>

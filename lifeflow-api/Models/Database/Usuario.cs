@@ -14,11 +14,14 @@ namespace LifeFlow.Models.Database
         public Guid IdRol { get; set; }
         public virtual Rol? Rol { get; set; }
 
-        public static Usuario Desconocido = new Usuario
+        public static readonly string IdentificadorInvalido = "-1";
+
+        public static readonly Usuario Desconocido = new Usuario
         {
-            Identificador = "-1",
+            Identificador = IdentificadorInvalido,
             IdRol = Guid.NewGuid()
         };
+
 
 
         //{

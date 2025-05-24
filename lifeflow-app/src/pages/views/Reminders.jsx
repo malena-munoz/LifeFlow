@@ -15,6 +15,9 @@ export default function Reminders(props) {
     const user = props.user;
     const token = props.token;
 
+    // Lista de recordatorios
+    const reminders = props.reminders;
+
     // Estado de modales, por defecto están ocultos
     const [displayCreateReminderModal, setDisplayCreateReminderModal] = useState(false);
     const [displayEditReminderModal, setDisplayEditReminderModal] = useState(false);
@@ -32,6 +35,8 @@ export default function Reminders(props) {
             <RemindersTable
             user={user} 
             token={token}
+            // Recordatorios
+            reminders={reminders}
             // Recordatorio seleccionado
             selectedReminder={selectedReminder}
             setSelectedReminder={setSelectedReminder}

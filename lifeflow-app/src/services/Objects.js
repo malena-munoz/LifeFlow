@@ -9,6 +9,7 @@ import { ReactComponent as DiarrheaIcon } from 'healthicons/public/icons/svg/fil
 import { ReactComponent as NauseasIcon } from 'healthicons/public/icons/svg/filled/conditions/nausea.svg';
 import { ReactComponent as VomitIcon } from 'healthicons/public/icons/svg/filled/conditions/vomiting.svg';
 import { ReactComponent as FeverIcon } from 'healthicons/public/icons/svg/filled/conditions/chills_fever.svg';
+import { VolcanoOutlined } from '@mui/icons-material/';
 
 
 export function Emotions() {
@@ -54,6 +55,7 @@ export function Symptoms() {
         { id: 2, icon: NauseasIcon, label: 'Náuseas' },
         { id: 3, icon: VomitIcon, label: 'Vómitos' },
         { id: 4, icon: FeverIcon, label: 'Fiebre' },
+        { id: 5, icon: VolcanoOutlined, label: 'Acné' },
     ];
 }
 
@@ -67,7 +69,7 @@ export function FemFluid() {
         { id: 6, icon: 'fi fi-rr-custard', label: 'Gelatinoso' },
         { id: 7, icon: 'fi fi-rr-wind-warning', label: 'Maloliente' },
         { id: 8, icon: 'fi fi-rr-pepper-hot', label: 'Picante' },
-        { id: 9, icon: 'fi fi-rr-cheese', label: 'Picante' }
+        { id: 9, icon: 'fi fi-rr-cheese', label: 'Cottage' }
     ];
 }
 
