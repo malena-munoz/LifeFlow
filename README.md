@@ -1,4 +1,7 @@
-# 🗓️🪽 LifeFlow
+<img src="https://i.ibb.co/20dF24NC/lifeflow.png"/>
+
+![Static Badge](https://img.shields.io/badge/En_proceso-%23C38778%20?style=for-the-badge&label=Estado&labelColor=%23c2185b)
+![Static Badge](https://img.shields.io/badge/1.0-%23E0F7FF?style=for-the-badge&label=Version&labelColor=%23c2185b)
 
 LifeFlow es una aplicación web para tener control y seguimiento de los ciclos menstruales femeninos. Esta app, desarrollada con 
 REACT y conectada a una API Web de .NET, permite registrar datos diarios, programar recordatorios, y crear estadísticas y 
