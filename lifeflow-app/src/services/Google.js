@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Notyf } from 'notyf';
 
-const notyf = new Notyf();
+export const notyf = new Notyf();
 
 export async function GoogleLogin(token, setLoginStatus) {
     try {
@@ -28,29 +28,6 @@ export async function GoogleLogin(token, setLoginStatus) {
     }
 }
 
-export async function GoogleFirstLogin(identifier, cycle) {
-    try {
-        const response = await fetch(`https://localhost:7245/api/user/first-login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "identificador": identifier
-            },
-            body: JSON.stringify(cycle)
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            notyf.error(`Error del servidor (${response.status}): ${errorText.message}`);
-            return;
-        }
-        
-        notyf.success("Datos guardados. Puedes editarlos en la opción de valores menstruales haciendo clic en el usuario.");
-    } catch (error) {
-        notyf.error("No se ha guardado los datos debido a un error durante el proceso.");
-    }
-}
-
 export function GoogleLogout(setLoginStatus) {
     localStorage.removeItem("login-session");
     setLoginStatus(null);
@@ -64,7 +41,7 @@ export function GoogleCheckSession(setLoginStatus) {
     const now = Date.now();
     const minutesPassed = (now - timestamp) / (1000 * 60);
 
-    if (minutesPassed <= 10) {
+    if (minutesPassed <= 30) {
         setLoginStatus({ user, timestamp, token });
     } else {
         // Sesión vencida
@@ -75,12 +52,11 @@ export function GoogleCheckSession(setLoginStatus) {
 
 export async function CreateGoogleReminder(token, reminder, identifier) {
     try {
-        const response = await fetch(`https://localhost:7245/api/google-calendar/create-event`, {
+        const response = await fetch(`https://localhost:7245/api/google-calendar/crear-recordatorio/${identifier}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "token": token,
-                "identificador": identifier
+                "Token": token,
             },
             body: JSON.stringify(reminder)
         });
@@ -137,7 +113,7 @@ export async function GetGoogleReminders(token, identifier) {
         return data;
     } catch (error) {
         notyf.error(error.message);
-        return {};
+        return [];
     }
 }
 

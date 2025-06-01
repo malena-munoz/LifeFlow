@@ -349,11 +349,24 @@ form {
     flex-direction: column;
 
     &#daily-data {
-        margin-top: -8px;
+        margin-top: 10px;
+        margin-bottom: 10px;
         scrollbar-width: none;
         gap: 2rem;
         padding: 8px;
     }
+}
+
+.selected-day {
+
+    &--info {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        color: $blanco;
+        font-size: 20px;
+    }
+
 }
 
 // ----------------------------------------------------------------------------
@@ -523,6 +536,31 @@ form {
     }
 }
 
+// ----------------------------------------------------------------------------
+//   Popovers
+// ----------------------------------------------------------------------------
+
+.popover {
+    border-radius: .25rem;
+    border-color: $gris;
+    max-width: 400px;
+
+    .popover-body {
+
+        strong {
+            font-size: 17px;
+        }
+
+        p {
+            text-align: justify;
+            text-justify: inter-word;
+        }
+    }
+}
+
+.bs-popover-end > .popover-arrow::before {
+    border-left-color: $gris;
+}
 
 // ----------------------------------------------------------------------------
 //   Modales
@@ -544,31 +582,30 @@ form {
 #form-create-reminder {
     @include columna;
     gap: 1rem;
-
-    
 }
 
 .form-control {
+    resize: none;
+    transition: all 100ms;
+    -webkit-transition: all 100ms;
+    border-radius: 0.25rem;
+    border-color: #cccccc;
+
+    &:focus {
+        outline: 0 !important;
         transition: all 100ms;
-        -webkit-transition: all 100ms;
-        border-radius: 0.25rem;
-        border-color: #cccccc;
-
-        &:focus {
-            outline: 0 !important;
-            transition: all 100ms;
-            background-color: hsl(0, 0%, 100%);
-            border-color: $azul-oscuro;
-            border-radius: 4px;
-            border-style: solid;
-            border-width: 1px;
-            box-shadow: 0 0 0 1px $azul-oscuro;
-        }
-
-        &.time-picker {
-            width: 4rem;
-        }
+        background-color: hsl(0, 0%, 100%);
+        border-color: $azul-oscuro;
+        border-radius: 4px;
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 0 0 1px $azul-oscuro;
     }
+
+    &.time-picker {
+        width: 4rem;
+    }
+}
 
     .form-check-input {
         &:focus {

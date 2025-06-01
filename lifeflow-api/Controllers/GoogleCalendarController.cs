@@ -2,10 +2,9 @@
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
-using LifeFlow.Models;
-using lifeflow_api.Models.Database;
+using lifeflow_api.Models;
+using lifeflow_api.Models.Scaffold;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace lifeflow_api.Controllers
 {
@@ -39,7 +38,7 @@ namespace lifeflow_api.Controllers
 
                 // Obtener recordatorios y lista vacía para guardar los recordatorios en formato "Event"
                 List<string> Recordatorios = _context.Recordatorios
-                    .Where(c => c.Identificador.Equals(identificador)).Select(c => c.IdRecordatorio).ToList();
+                    .Where(c => c.IdUsuario.Equals(identificador)).Select(c => c.IdGoogleCalendarEvent).ToList();
 
                 List<Event> Eventos = new List<Event>();
 
@@ -57,23 +56,24 @@ namespace lifeflow_api.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
-
-        [HttpPost("create-event")]  // CREA UN EVENTO EN EL CALENDARIO
-        public async Task<IActionResult> CreateEvent([FromHeader] string token, [FromHeader] string identificador, [FromBody] Event reminder)
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        [HttpPost("crear-recordatorio/{Id}")]  // CREA UN EVENTO EN EL CALENDARIO
+        public async Task<IActionResult> CrearRecordatorio(string Id, [FromHeader] string Token, [FromBody] Event RecordatorioGoogleCalendar)
         {
             try
             {
                 // Creación de evento en Google Calendar
-                CalendarService Servicio = await GetCalendarServiceAsync(token);
-                Event Evento = await Servicio.Events.Insert(reminder, "primary").ExecuteAsync();
+                CalendarService Servicio = await GetCalendarServiceAsync(Token);
+                Event Evento = await Servicio.Events.Insert(RecordatorioGoogleCalendar, "primary").ExecuteAsync();
 
                 // Guardar ID del evento en la base de datos
                 Recordatorio Recordatorio = new Recordatorio
                 {
-                    Identificador = identificador,
-                    IdRecordatorio = Evento.Id
+                    Id = Guid.NewGuid(),
+                    IdUsuario = Id,
+                    IdGoogleCalendarEvent = Evento.Id
                 };
+
                 _context.Recordatorios.Add(Recordatorio);
                 _context.SaveChanges();
 
@@ -118,7 +118,7 @@ namespace lifeflow_api.Controllers
         public async Task<IActionResult> DeleteEvent(string reminder_id, [FromHeader] string token, [FromHeader] string identificador)
         {
             Recordatorio Recordatorio = _context.Recordatorios
-                .FirstOrDefault(r => r.IdRecordatorio.Equals(reminder_id)) ?? new Recordatorio();
+                .FirstOrDefault(r => r.IdGoogleCalendarEvent.Equals(reminder_id)) ?? new Recordatorio();
 
             try
             {

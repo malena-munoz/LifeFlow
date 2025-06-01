@@ -1,50 +1,134 @@
+import { useMemo } from "react";
+import { CalendarObject } from "../../services/DateTimeService";
 import Calendar from "../../components/custom/Calendar";
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { HorizontalRuleRounded } from '@mui/icons-material';
 import { Form } from 'react-bootstrap';
+import { GuardarInformacionDiaria, InformacionDiariaTrimestre } from "../../services/InformacionDiariaService";
+import { CurrentDate } from "../../services/DateTimeService";
+import { SpanishDateString } from "../../services/Methods";
 
 export default function Index(props){
     // Datos del usuario
     const user = props.user;
     const token = props.token;
 
-    const [selected, setSelected] = useState([]);
-    const [bodyParts, setBodyParts] = useState([]);
-    const [symtoms, setSymtoms] = useState([]);
-    const [fluidoFemenino, setFluidoFemenino] = useState([]);
-    const [formNotes, setFormNotes] = useState('');
+    const recordatorios = props.reminders;
+    const ciclos = props.ciclos;
+    const calendar_obj = useMemo(() => CalendarObject(), []);
+    const [mesSeleccionado, setMesSeleccionado] = useState(calendar_obj.actual);
+
+    // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+    //  Variables para acceso a datos
+    // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+
+    // Emociones
+    const [datoEmociones, setDatoEmociones] = useState([]);
+    // Molestias 
+    const [datoMolestias, setDatoMolestias] = useState([]);
+    // Síntomas 
+    const [datoSintomasCuerpo, setDatoSintomasCuerpo] = useState([]);
+    // Fluido femenino 
+    const [datoFluidoFemenino, setDatoFluidoFemenino] = useState([]);
+    // Prueba de embarazo 
+    const [datoPruebaEmbarazo, setDatoPruebaEmbarazo] = useState('No realizado');
+    // Notas
+    const [datoNotas, setDatoNotas] = useState('');
+    // Día
+    const [datoDia, setDatoDia] = useState(1);
+    // Mes
+    const [datoMes, setDatoMes] = useState('');
+    // Año
+    const [datoAnio, setDatoAnio] = useState(2025);
+
+    // Efectos
+    const notasRef = useRef(null);
+    useEffect(() => {
+        const textarea = notasRef.current;
+        if (textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+        }
+    }, [datoNotas]);
+
+    const [informacionDiaria, setInformacionDiaria] = useState(null);
+    useEffect(() => {
+        async function fetchInformacion() {
+            const data = await InformacionDiariaTrimestre(user.sub, user.given_name, user.family_name);
+            setInformacionDiaria(data); 
+        }
+
+        if (user) { fetchInformacion(); }
+        
+    }, [user]);
 
 
     const toggleSeleccion = (id) => {
-        setSelected(prev =>
-            prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+        setDatoEmociones(prev =>
+            prev.includes(String(id)) ? prev.filter(itemId => itemId !== String(id)) : [...prev, String(id)]
         );
     };
 
     const toggleBodyParts = (id) => {
-        setBodyParts(prev =>
-            prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+        setDatoMolestias(prev =>
+            prev.includes(String(id)) ? prev.filter(itemId => itemId !== String(id)) : [...prev, String(id)]
         );
     };
 
     const toggleSymtoms = (id) => {
-        setSymtoms(prev =>
-            prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+        setDatoSintomasCuerpo(prev =>
+            prev.includes(String(id)) ? prev.filter(itemId => itemId !== String(id)) : [...prev, String(id)]
         );
     };
 
     const toggleFluidoFemenino = (id) => {
-        setFluidoFemenino(prev =>
-            prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+        setDatoFluidoFemenino(prev =>
+            prev.includes(String(id)) ? prev.filter(itemId => itemId !== String(id)) : [...prev, String(id)]
         );
     };
 
+    const toggleDatoPruebaEmbarazo = (check) => {
+        let opcion = check.parentNode.querySelector('label').textContent;
+        setDatoPruebaEmbarazo(opcion);
+    };
+
+    const RegistrarDatosDiarios = function() {
+        let informacion_diaria = {
+            IdUsuario: user.sub,
+            Fecha: CurrentDate(datoDia, String(datoMes+1), datoAnio),
+            PruebaEmbarazo: datoPruebaEmbarazo.trim(),
+            Notas: datoNotas,
+            Sintomas: datoSintomasCuerpo,
+            Emociones: datoEmociones,
+            FluidoFemenino: datoFluidoFemenino,
+            Molestias: datoMolestias,
+        }; 
+
+        GuardarInformacionDiaria(user.sub, user.given_name, user.family_name, informacion_diaria);
+    }
+
     return (
         <article>
-            <Calendar />
+            <Calendar 
+            dia={datoDia} setDia={setDatoDia} 
+            mes={datoMes} setMes={setDatoMes} 
+            anio={datoAnio} setAnio={setDatoAnio}
+            informacionDiaria={informacionDiaria}
+            calendarObj={calendar_obj}
+            ciclos={ciclos}
+            mesSeleccionado={mesSeleccionado}
+            setMesSeleccionado={setMesSeleccionado}
+            />
             <div className="flex-grow-1 d-flex flex-column">
-                <form id="daily-data" className="overflow-auto">
+                <div className="bg-azul-medio rounded-1 p-3">
+                    <div className="selected-day--info">
+                        <i className="fi fi-rr-daily-calendar me-1"></i>
+                        <span className="text-decoration-underline">Día seleccionado: </span>
+                        {SpanishDateString(CurrentDate(datoDia, Number(datoMes + 1), datoAnio))}
+                    </div>
+                </div>
+                <form id="daily-data" className="overflow-auto" onSubmit={(e) => {e.preventDefault();} }>
                     <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Emociones</h5>
@@ -55,7 +139,7 @@ export default function Index(props){
                         {Emotions().map((emocion) => (
                             <div
                             key={emocion.id}
-                            className={`icon-item ${selected.includes(emocion.id) ? 'selected' : ''}`}
+                            className={`icon-item ${datoEmociones.includes(String(emocion.id)) ? 'selected' : ''}`}
                             onClick={() => toggleSeleccion(emocion.id)}
                             >
                                 <i className={emocion.icon}></i> {emocion.label}
@@ -73,7 +157,7 @@ export default function Index(props){
                             {BodyParts().map((parte) => (
                                 <div
                                 key={parte.id}
-                                className={`icon-item ${bodyParts.includes(parte.id) ? 'selected' : ''}`}
+                                className={`icon-item ${datoMolestias.includes(String(parte.id)) ? 'selected' : ''}`}
                                 onClick={() => toggleBodyParts(parte.id)}
                                 >
                                 <parte.icon height={20} width={20} /> {parte.label}
@@ -91,7 +175,7 @@ export default function Index(props){
                             {Symptoms().map((parte) => (
                                 <div
                                 key={parte.id}
-                                className={`icon-item ${symtoms.includes(parte.id) ? 'selected' : ''}`}
+                                className={`icon-item ${datoSintomasCuerpo.includes(String(parte.id)) ? 'selected' : ''}`}
                                 onClick={() => toggleSymtoms(parte.id)}
                                 >
                                 <parte.icon height={20} width={20} /> {parte.label}
@@ -109,7 +193,7 @@ export default function Index(props){
                         {FemFluid().map((fluido) => (
                             <div
                             key={fluido.id}
-                            className={`icon-item ${fluidoFemenino.includes(fluido.id) ? 'selected' : ''}`}
+                            className={`icon-item ${datoFluidoFemenino.includes(String(fluido.id)) ? 'selected' : ''}`}
                             onClick={() => toggleFluidoFemenino(fluido.id)}
                             >
                             <i className={fluido.icon}></i> {fluido.label}
@@ -124,43 +208,55 @@ export default function Index(props){
                             <span>¿Cuál fue el resultado?</span>
                         </div>
                         <div className="d-flex flex-column flex-wrap gap-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-1"/>
-                                <label class="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
+                            <div className="form-check">
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                className="form-check-input" type="radio" defaultChecked
+                                name="pregnancy-test" id="pregnancy-test-1"/>
+                                <label className="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
-                                <label class="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
+                            <div className="form-check">
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
+                                <label className="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
-                                <label class="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
+                            <div className="form-check">
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
+                                <label className="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
-                                <label class="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
+                            <div className="form-check">
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
+                                <label className="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
-                                <label class="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
+                            <div className="form-check">
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
+                                <label className="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
                             </div>
                         </div>
                     </div>
-                    <div className="form-property property-contained mb-4">
+                    <div className="form-property property-contained">
                         <div className="d-flex flex-row gap-1">
                             <h5>Notas</h5>
                         </div>
                         <div className="d-flex flex-row flex-wrap gap-2">
                             <Form.Control 
+                            ref={notasRef}
+                            className="overflow-hidden res"
                             id="notes" 
                             as='textarea' 
                             placeholder='Escribe alguna nota adicional.' 
-                            multiline
-                            onChange={(e) => setFormNotes(e.target.value)}/>
+                            multiple
+                            onChange={(e) => setDatoNotas(e.target.value)}/>
                         </div>
                     </div>
                 </form>
-                <button id="save-day-stats" className="btn-pink">Guardar cambios</button>
+                <button 
+                id="save-day-stats" 
+                className="btn-pink"
+                onClick={() => RegistrarDatosDiarios()}
+                >Guardar cambios</button>
             </div>
         </article>
     );

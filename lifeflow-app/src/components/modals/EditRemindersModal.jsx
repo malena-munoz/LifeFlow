@@ -210,7 +210,7 @@ export default function EditRemindersModal(props){
         if (infoReminder) {
             set_FormTitle(infoReminder.summary || '');
             set_FormLocation(infoReminder.location || '');
-            set_FormColor(infoReminder.colorId || '');
+            set_FormColor(Number(infoReminder.colorId) || '');
             set_FormDescription(infoReminder.description || '');
             set_FormGuests(infoReminder.attendees || []);
             set_FormDate(infoReminder.start || new Date().toISOString().slice(0, 16));
@@ -221,8 +221,6 @@ export default function EditRemindersModal(props){
             set_FormDaysWeek(infoReminder.days_week || []);
             set_FormDurationFrequencyInfinite(infoReminder.frequency_infinite || true);
             set_FormDurationFrequency(infoReminder.count || '');
-
-            console.log("INFO REMINDER", infoReminder);
         }
     }, [infoReminder]);
 
@@ -256,7 +254,7 @@ export default function EditRemindersModal(props){
                             options={GooogleColors()}
                             getOptionLabel={getOptionLabel}
                             isSearchable={false}
-                            defaultValue={formColor}
+                            defaultValue={GooogleColors().find(color => color.value === formColor)}
                             id='color-picker'
                             placeholder="Selecciona un color"
                             noOptionsMessage={() => "No hay opciones"}

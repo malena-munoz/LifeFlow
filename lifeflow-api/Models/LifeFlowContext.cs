@@ -1,139 +1,81 @@
-﻿using LifeFlow.Models.Database;
-using lifeflow_api.Models.Database;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
+using lifeflow_api.Models.Scaffold;
 using System.Text.Json;
 
-namespace LifeFlow.Models
+namespace lifeflow_api.Models;
+
+public partial class LifeFlowContext : DbContext
 {
-    public class LifeFlowContext : DbContext
+    public LifeFlowContext()
     {
-        private readonly IConfiguration _configuration;
+    }
 
-        public LifeFlowContext(DbContextOptions<LifeFlowContext> options, IConfiguration configuration) : base(options) 
+    public LifeFlowContext(DbContextOptions<LifeFlowContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Ciclo> Ciclos { get; set; }
+
+    public virtual DbSet<Embarazo> Embarazos { get; set; }
+
+    public virtual DbSet<InformacionDiaria> InformacionDiaria { get; set; }
+
+    public virtual DbSet<Recordatorio> Recordatorios { get; set; }
+
+    public virtual DbSet<Rol> Rols { get; set; }
+
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=malena\\MSSQLSERVER01;Initial Catalog=LifeFlow;Integrated Security=True;Trust Server Certificate=True");
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Ciclo>(entity =>
         {
-            _configuration = configuration;
-        }
+            entity.ToTable("Ciclo");
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.IdUsuario).HasMaxLength(50);
+
+            entity.HasOne(d => d.IdEmbarazazoNavigation).WithMany(p => p.Ciclos)
+                .HasForeignKey(d => d.IdEmbarazazo)
+                .HasConstraintName("FK_Ciclo_Embarazo");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Ciclos)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Ciclo_Usuario");
+        });
+
+        modelBuilder.Entity<Embarazo>(entity =>
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(_configuration.GetConnectionString("LifeFlowConnection")); 
-            }
-        }
+            entity.ToTable("Embarazo");
 
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.IdUsuario).HasMaxLength(50);
 
-        public DbSet<Usuario> Usuarios { get; set; } = null!;
-        public DbSet<Rol> Roles { get; set; } = null!;
-        public DbSet<Recordatorio> Recordatorios { get; set; } = null!;
-        public DbSet<Ciclo> Ciclos { get; set; } = null!;
-        public DbSet<Sintomas> Sintomas { get; set; } = null!;
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Embarazos)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Embarazo_Usuario");
+        });
 
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        modelBuilder.Entity<InformacionDiaria>(entity =>
         {
-            modelBuilder.Entity<Usuario>(entity =>
-            {
-                entity.ToTable("Usuario");
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.IdUsuario).HasMaxLength(50);
 
-                entity.HasKey(e => e.Identificador);
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.InformacionDiaria)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_InformacionDiaria_Usuario");
 
-                entity.Property(e => e.Identificador).HasColumnName("Id");
-
-                entity.Property(e => e.IdRol).HasColumnName("Id_Rol");
-
-                entity.HasOne(u => u.Rol)
-                    .WithOne(e => e.Usuario)
-                    .HasForeignKey<Usuario>(e => e.IdRol)
-                    .IsRequired().OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Rol>(entity =>
-            {
-                entity.ToTable("Rol");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id).HasColumnName("Id");
-
-                entity.Property(e => e.NombreRol).HasColumnName("Nombre");
-            });
-
-            modelBuilder.Entity<Recordatorio>(entity =>
-            {
-                entity.ToTable("Recordatorio");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id).HasColumnName("Id");
-
-                entity.Property(e => e.Identificador).HasColumnName("Identificador");
-
-                entity.Property(e => e.IdRecordatorio).HasColumnName("Id_Recordatorio");
-            });
-
-            modelBuilder.Entity<Ciclo>(entity =>
-            {
-                entity.ToTable("Ciclo");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id).HasColumnName("Id");
-
-                entity.Property(e => e.Identificador).HasColumnName("Id_Usuario");
-
-                entity.Property(e => e.IdSintomas).HasColumnName("Id_Sintomas");
-
-                entity.Property(e => e.InicioCiclo)
-                    .HasColumnName("InicioCiclo")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.DuracionCiclo)
-                    .HasColumnName("DuracionCiclo")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.DuracionMenstruacion)
-                    .HasColumnName("DuracionMenstruacion")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.Embarazo)
-                    .HasColumnName("Embarazo")
-                    .HasColumnType("bit");
-
-                entity.Property(e => e.PrediccionInicioCiclo)
-                    .HasColumnName("PrediccionInicioCiclo")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.PrediccionDuracionCiclo)
-                    .HasColumnName("PrediccionDuracionCiclo")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.PrediccionInicioOvulacion)
-                    .HasColumnName("PrediccionInicioOvulacion")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.PrediccionDuracionOvulacion)
-                    .HasColumnName("PrediccionDuracionOvulacion")
-                    .HasColumnType("real");
-
-                entity.Property(e => e.PrimerCicloRegistrado)
-                  .HasColumnName("PrimerCicloRegistrado")
-                  .HasColumnType("bit");
-
-            });
-
-            modelBuilder.Entity<Sintomas>(entity =>
-            {
-                entity.ToTable("Sintomas");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.Id).HasColumnName("Id");
-
-                entity.Property(e => e.PruebaEmbarazo).HasColumnName("PruebaEmbarazo");
-
-                entity.Property(e => e.Emociones)
+            entity.Property(e => e.Emociones)
                     .HasColumnName("Emociones")
                     .HasColumnType("nvarchar(max)")
                     .HasConversion
@@ -142,34 +84,68 @@ namespace LifeFlow.Models
                          v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
                     );
 
-                entity.Property(e => e.Molestias)
-                   .HasColumnName("Molestias")
-                   .HasColumnType("nvarchar(max)")
-                   .HasConversion
-                   (
-                        v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
-                        v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
-                   );
+            entity.Property(e => e.Molestias)
+               .HasColumnName("Molestias")
+               .HasColumnType("nvarchar(max)")
+               .HasConversion
+               (
+                    v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                    v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
+               );
 
-                entity.Property(e => e.SintomasCuerpo)
-                   .HasColumnName("SintomasCuerpo")
-                   .HasColumnType("nvarchar(max)")
-                   .HasConversion
-                   (
-                        v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
-                        v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
-                   );
+            entity.Property(e => e.Sintomas)
+               .HasColumnName("Sintomas")
+               .HasColumnType("nvarchar(max)")
+               .HasConversion
+               (
+                    v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                    v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
+               );
 
-                entity.Property(e => e.FluidoFemenino)
-                   .HasColumnName("FluidoFemenino")
-                   .HasColumnType("nvarchar(max)")
-                   .HasConversion
-                   (
-                        v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
-                        v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
-                   );
-            });
-        }
+            entity.Property(e => e.FluidoFemenino)
+               .HasColumnName("FluidoFemenino")
+               .HasColumnType("nvarchar(max)")
+               .HasConversion
+               (
+                    v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                    v => JsonSerializer.Deserialize<List<string>>(v, JsonSerializerOptions.Default) ?? new List<string>()
+               );
+        });
 
+        modelBuilder.Entity<Recordatorio>(entity =>
+        {
+            entity.ToTable("Recordatorio");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.IdUsuario).HasMaxLength(50);
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Recordatorios)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Recordatorio_Usuario");
+        });
+
+        modelBuilder.Entity<Rol>(entity =>
+        {
+            entity.ToTable("Rol");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.ToTable("Usuario");
+
+            entity.Property(e => e.Id).HasMaxLength(50);
+
+            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Usuario_Rol");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

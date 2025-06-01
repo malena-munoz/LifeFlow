@@ -368,10 +368,19 @@ form {
   flex-direction: column;
 }
 form#daily-data {
-  margin-top: -8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   scrollbar-width: none;
   gap: 2rem;
   padding: 8px;
+}
+
+.selected-day--info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #FFFFFF;
+  font-size: 20px;
 }
 
 .form-property {
@@ -515,6 +524,23 @@ form#daily-data {
   color: #FF8CBF;
 }
 
+.popover {
+  border-radius: 0.25rem;
+  border-color: #DBDBDD;
+  max-width: 400px;
+}
+.popover .popover-body strong {
+  font-size: 17px;
+}
+.popover .popover-body p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.bs-popover-end > .popover-arrow::before {
+  border-left-color: #DBDBDD;
+}
+
 .modal .modal-header {
   justify-content: space-between;
 }
@@ -530,6 +556,7 @@ form#daily-data {
 }
 
 .form-control {
+  resize: none;
   transition: all 100ms;
   -webkit-transition: all 100ms;
   border-radius: 0.25rem;
@@ -764,6 +791,7 @@ form#daily-data {
   grid-template-columns: repeat(7, minmax(120px, 1fr));
   grid-template-rows: 50px;
   overflow: auto;
+  pointer-events: none;
 }
 .calendar-container {
   display: flex;
@@ -810,6 +838,8 @@ form#daily-data {
   z-index: 1;
   height: 100%;
   background-color: #FFFFFF;
+  pointer-events: auto;
+  transition: all ease-in 0.2s;
 }
 .day:nth-of-type(7n + 7) {
   border-right: 0;
@@ -849,6 +879,33 @@ form#daily-data {
 }
 .day:nth-of-type(7n + 7) {
   grid-column: 7/7;
+}
+.day-alerts {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  display: flex;
+  gap: 5px;
+}
+.day-alerts .day--daily-info {
+  padding: 0.75rem;
+  border-radius: 50%;
+  transition: all ease-in 0.2s;
+  background-color: #64B5F6;
+}
+.day-alerts .day--daily-info:hover {
+  cursor: pointer;
+  background-color: #1976D2;
+}
+.day-alerts .day--reminders {
+  padding: 0.75rem;
+  border-radius: 50%;
+  transition: all ease-in 0.2s;
+  background-color: #FF8CBF;
+}
+.day-alerts .day--reminders:hover {
+  cursor: pointer;
+  background-color: #FF4D94;
 }
 .day-name {
   font-size: 12px;
@@ -897,8 +954,14 @@ form#daily-data {
 .day--current {
   color: #1976D2;
   background-color: #F0FBFF;
-  cursor: not-allowed;
 }
+.day-selected {
+  box-shadow: inset 0 0 0 2px #1976D2;
+}
+.day:not(.day--disabled):not(.day--current):hover {
+  cursor: pointer;
+}
+
 .task {
   border-left-width: 3px;
   padding: 8px 12px;

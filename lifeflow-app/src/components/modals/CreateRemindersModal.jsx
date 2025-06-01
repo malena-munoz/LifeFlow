@@ -23,7 +23,7 @@ export default function CreateReminderModal(props){
     const [formHours, set_FormHours] = useState(1);  // DURACION -> HORAS
     const [formMinutes, set_FormMinutes] = useState(0);  // DURACION -> MINUTOS
     const [displayFormFrequency, set_DisplayFormFrequency] = useState(false);  // VISTA DE LA FRECUENCIA
-    const [formFrequency, set_FormFrequency] = useState('');  // FRECUENCIA
+    const [formFrequency, set_FormFrequency] = useState('DAILY');  // FRECUENCIA
     const [formDaysWeek, set_FormDaysWeek] = useState([]);  // DIAS DE LA SEMANA
     const [formDurationFrequencyInfinite, set_FormDurationFrequencyInfinite] = useState(true);  // VISTA DE LA DURACION DE LA FRECUENCIA
     const [formDurationFrequency, set_FormDurationFrequency] = useState('');  // DURACION DE FRECUENCIA
@@ -55,7 +55,7 @@ export default function CreateReminderModal(props){
             },
         };
 
-        if (displayFormFrequency) {;
+        if (displayFormFrequency) {
             let recurrencia_string = `RRULE:FREQ=${formFrequency};`;
 
             if (formFrequency == 'WEEKLY' && formDaysWeek.length > 0) {

@@ -11,7 +11,6 @@ import { ReactComponent as VomitIcon } from 'healthicons/public/icons/svg/filled
 import { ReactComponent as FeverIcon } from 'healthicons/public/icons/svg/filled/conditions/chills_fever.svg';
 import { VolcanoOutlined } from '@mui/icons-material/';
 
-
 export function Emotions() {
     return [
         { id: 1, icon: 'fi fi-rr-smile', label: 'Feliz' },

@@ -1,9 +1,12 @@
-using LifeFlow.Models;
+using lifeflow_api.Models;
+using lifeflow_api.Services;
 using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICicloService, CicloService>();
 
 builder.Services.AddCors(options =>
 {
@@ -35,11 +38,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseRouting(); 
 
-app.UseCors("PermitirReact"); 
+app.UseCors("PermitirReact");
+
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

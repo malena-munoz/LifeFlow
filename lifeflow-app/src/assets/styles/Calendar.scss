@@ -1,4 +1,5 @@
 ﻿@import 'App.scss';
+@import 'Colors.scss';
 
 .calendar {
     display: grid;
@@ -8,6 +9,7 @@
     grid-template-columns: repeat(7, minmax(120px, 1fr));
     grid-template-rows: 50px;
     overflow: auto;   
+    pointer-events: none;
 
     &-container {
         display: flex;
@@ -56,6 +58,8 @@
     z-index: 1;
     height: 100%;
     background-color: $blanco;
+    pointer-events: auto;
+    transition: all ease-in .2s;
 
     &:nth-of-type(7n + 7) {
         border-right: 0;
@@ -107,6 +111,38 @@
 
     &:nth-of-type(7n + 7) {
         grid-column: 7/7;
+    }
+
+    &-alerts {
+        position: absolute;
+        right: 7px;
+        bottom: 7px;
+        display: flex;
+        gap: 5px;
+
+        .day--daily-info {
+            padding: .75rem;
+            border-radius: 50%;
+            transition: all ease-in .2s;
+            background-color: map-get($blue-palette, b-3);
+
+            &:hover {
+                cursor: pointer;
+                background-color: map-get($blue-palette, b-4);
+            }
+        }
+
+        .day--reminders {
+            padding: .75rem;
+            border-radius: 50%;
+            transition: all ease-in .2s;
+            background-color: map-get($pink-palette, p-3);
+
+            &:hover {
+                cursor: pointer;
+                background-color: map-get($pink-palette, p-4);
+            }
+        }
     }
 
     &-name {
@@ -161,16 +197,16 @@
     &--current {
         color: $azul-oscuro;
         background-color: $azul-extra-claro;
-        cursor: not-allowed;
     }
 
-    .info-reminders {
-
+    &-selected {
+        box-shadow: inset 0 0 0 2px map-get($blue-palette, b-4);
+    }
+    
+    &:not(.day--disabled):not(.day--current):hover {
+        cursor: pointer;
     }
 
-    .info--daily-data {
-        
-    }
 }
 
 .task {

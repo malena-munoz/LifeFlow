@@ -1,12 +1,19 @@
-﻿using lifeflow_api.Services;
+﻿using lifeflow_api.Models.Scaffold;
+using lifeflow_api.Services;
 
 namespace lifeflow_api.Models.Objects
 {
-    public class DatosUltimoCiclo
+    public class DatosCicloBase
     {
-        public float DiaInicioCiclo { get; set; }
-        public DateOnly FechaInicioCiclo => new DateOnly(CycleService.MesAnterior.Year, CycleService.MesAnterior.Month, (int) DiaInicioCiclo);
-        public float DuracionMenstruacion { get; set; }
+        public int DiaInicioCiclo { get; set; }
+        public int DuracionMenstruacion { get; set; }
         public string DuracionCiclo { get; set; } = string.Empty;
+    }
+
+    public class InformacionDiariaTrimestral
+    {
+        public InformacionDiaria InformacionMesAnterior { get; set; } = null!;
+        public InformacionDiaria InformacionMesActual { get; set; } = null!;
+        public InformacionDiaria InformacionMesSiguiente { get; set; } = null!;
     }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Select from 'react-select';
-import { GoogleFirstLogin } from '../../services/Google';
+import { GuardarDatosCicloBase } from "../../services/UsuarioServices";
 import { Modal, ModalBody, ModalHeader, ModalFooter, ModalTitle, Form } from 'react-bootstrap';
 import { InfoOutlined, SaveRounded, Close } from '@mui/icons-material'; 
 import { GetDaysOfPreviousMonth } from '../../services/Methods';
@@ -32,7 +32,7 @@ export default function EditPeriodInfoModal(props) {
             DuracionMenstruacion: periodDuration,
             DuracionCiclo: cycleDuration
         };
-        GoogleFirstLogin(user.sub, ciclo);
+        GuardarDatosCicloBase(user.sub, user.given_name, user.family_name, ciclo);
     };
 
     return (

@@ -368,10 +368,19 @@ form {
   flex-direction: column;
 }
 form#daily-data {
-  margin-top: -8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   scrollbar-width: none;
   gap: 2rem;
   padding: 8px;
+}
+
+.selected-day--info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #FFFFFF;
+  font-size: 20px;
 }
 
 .form-property {
@@ -515,6 +524,23 @@ form#daily-data {
   color: #FF8CBF;
 }
 
+.popover {
+  border-radius: 0.25rem;
+  border-color: #DBDBDD;
+  max-width: 400px;
+}
+.popover .popover-body strong {
+  font-size: 17px;
+}
+.popover .popover-body p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.bs-popover-end > .popover-arrow::before {
+  border-left-color: #DBDBDD;
+}
+
 .modal .modal-header {
   justify-content: space-between;
 }
@@ -530,6 +556,7 @@ form#daily-data {
 }
 
 .form-control {
+  resize: none;
   transition: all 100ms;
   -webkit-transition: all 100ms;
   border-radius: 0.25rem;

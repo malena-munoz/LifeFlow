@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { IsNewUser } from '../services/User'
+import { EsNuevoUsuario } from '../services/UsuarioServices'
 import ResgisterPeriodInfoModal from "../components/modals/RegisterPeriodInfoModal";
 import Loader from '../components/custom/Loader';
 import Nav from '../components/custom/Nav';
 import Index from './views/Index';
 import Reminders from './views/Reminders';
 import { GetGoogleReminders } from "../services/Google";
+import { AgruparRecordatoriosPorDia } from "../services/RecordatoriosService";
+import { CiclosTrimestre } from "../services/CicloService";
+
 
 export default function Main(props) {
     const login = props.login;
@@ -16,6 +19,7 @@ export default function Main(props) {
 
     // DATOS RELACIONADOS CON CICLOS Y RECORDATORIOS
     const reminders = React.useRef([]);
+    const ciclos = React.useRef([]);
 
     const renderPage = () => {
         switch(page){
@@ -23,7 +27,9 @@ export default function Main(props) {
                 return <Index 
                 user={login.user} 
                 token={login.token}
-                reminders={reminders}/>;
+                reminders={reminders}
+                ciclos={ciclos.current}
+                />;
             case 2:
                 return <Reminders 
                 user={login.user} 
@@ -36,17 +42,21 @@ export default function Main(props) {
 
     useEffect(() => {
         const checkIfNewUser = async () => {
-            const isNew = await IsNewUser(login.user.sub);
+            const isNew = await EsNuevoUsuario(login.user.sub, login.user.given_name, login.user.family_name);
             setNewUser(isNew);
         };
+        const fetchCiclos = async () => {
+            const ciclos_trimestre = await CiclosTrimestre(login.user.sub, login.user.given_name, login.user.family_name);
+            ciclos.current = ciclos_trimestre;
+        };
         checkIfNewUser();
+        fetchCiclos();
     }, []);
 
     useEffect(() => {
         async function fetchReminders() {
             const data = await GetGoogleReminders(login.token, login.user.sub);
             reminders.current = data;
-            console.log("recordatorios",reminders.current);
         }
         fetchReminders();
     }, [login.token, login.user.sub]);

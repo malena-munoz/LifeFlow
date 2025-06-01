@@ -2,12 +2,9 @@
 import React, { useState } from 'react';
 // Componentes
 import * as bootstrap from 'bootstrap';
-
 import CreateRemindersModal from '../../components/modals/CreateRemindersModal';
 import EditRemindersModal from '../../components/modals/EditRemindersModal';
 import RemindersTable from '../../components/tables/RemindersTable';
-
-
 
 
 export default function Reminders(props) {

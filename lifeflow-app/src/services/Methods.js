@@ -54,8 +54,6 @@ export function GetInformationRRULE(reminder, default_values = false) {
         let rrule_frequency = rrule.options.freq == RRule.DAILY ? "Diaria" : 
             rrule.options.freq == RRule.WEEKLY ? "Semanal" :
             rrule.options.freq == RRule.MONTHLY ? "Mensual" : "???";
-        
-            console.log(rrule.options.byweekday);
         let rrule_daysweek = rrule.options.byweekday != null ? rrule.options.byweekday.map(day => Filter2Recurrency()[day] ? Filter2Recurrency()[day].label : '???') : [];
 
         return {
