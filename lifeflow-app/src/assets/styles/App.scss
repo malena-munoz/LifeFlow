@@ -1,3 +1,5 @@
+@import 'Colors.scss';
+
 $negro: #000000;
 $blanco: #FFFFFF;
 $gris: #DBDBDD;
@@ -365,6 +367,43 @@ form {
         gap: .5rem;
         color: $blanco;
         font-size: 20px;
+    }
+
+    &--controller {
+        display: flex;
+        gap: .5rem;
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+            border-radius: .25rem;
+
+            svg {
+                height: 30px;
+                width: auto;
+            }
+        }
+        
+        .blood {
+            &-confirm {
+                color: $blanco;
+                background-color: map-get($map: $pink-palette, $key: p-4);
+
+                &:hover {
+                    background-color: map-get($map: $pink-palette, $key: p-5);
+                }
+            }
+
+            &-delete {
+                color: map-get($map: $pink-palette, $key: p-5);
+                background-color: map-get($map: $bw-palette, $key: bw-0);
+
+                &:hover {
+                    background-color: map-get($map: $bw-palette, $key: bw-1);
+                }
+            }
+        }
     }
 
 }

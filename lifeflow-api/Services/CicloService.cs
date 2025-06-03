@@ -1,5 +1,6 @@
 ﻿using lifeflow_api.Models;
 using lifeflow_api.Models.Scaffold;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
 namespace lifeflow_api.Services
@@ -11,6 +12,10 @@ namespace lifeflow_api.Services
         float DuracionCiclo(string Duracion);
         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre();
         (Ciclo ciclo1, Ciclo ciclo2) PredecirDosSiguientesCiclos(Ciclo CicloBase);
+        Ciclo ObtenerDiaDeSangrado(DateOnly FechaSangrado);
+        Ciclo? ObtenerCicloDeUnDiaDeSangrado(DateOnly FechaSangrado, string IdUsuario);
+        (Ciclo? Ciclo, string Posicion) ObtenerCicloConInicioCercano(DateOnly FechaSangrado, string IdUsuario);
+        (Ciclo? Ciclo, string Posicion) ObtenerCicloRelativo(DateOnly FechaSangrado, string id);
     }
 
     public class CicloService : ICicloService
@@ -77,7 +82,59 @@ namespace lifeflow_api.Services
 
             return (PrimerCicloPredicho, SegundoCicloPredicho);
         }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public Ciclo ObtenerDiaDeSangrado(DateOnly FechaSangrado)
+        {
+            Ciclo? DiaDeSangrado = _context.Ciclos
+                .FirstOrDefault(c => c.InicioCiclo.Equals(FechaSangrado) 
+                && c.DuracionCiclo.Equals(0) && c.EsPrediccion);
 
+            return DiaDeSangrado ?? null!;
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public Ciclo? ObtenerCicloDeUnDiaDeSangrado(DateOnly FechaSangrado, string IdUsuario)
+        {
+            return _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario) && c.DuracionCiclo > 0)
+                .AsEnumerable() // Para poder usar AddDays con DateOnly (no soportado en LINQ to Entities)
+                .FirstOrDefault(c =>
+                {
+                    int Duracion = (int) Math.Round(c.DuracionCiclo);
+                    DateOnly FinCiclo = c.InicioCiclo.AddDays(Duracion);
+                    return FechaSangrado >= c.InicioCiclo && FechaSangrado < FinCiclo;
+                });
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public (Ciclo? Ciclo, string Posicion) ObtenerCicloConInicioCercano(DateOnly FechaSangrado, string IdUsuario)
+        {
+            List<Ciclo> Ciclos = _context.Ciclos.Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+            
+            var CicloAntes = Ciclos.FirstOrDefault(c => c.InicioCiclo.AddDays(-1) == FechaSangrado);
+            if (CicloAntes != null) return (CicloAntes, "antes");
 
+            var CicloDespues = Ciclos.FirstOrDefault(c => c.InicioCiclo.AddDays((int) c.DuracionMenstruacion) == FechaSangrado);
+            if (CicloDespues != null) return (CicloDespues, "despues");
+
+            return (null, string.Empty);
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public (Ciclo? Ciclo, string Posicion) ObtenerCicloRelativo(DateOnly FechaSangrado, string IdUsuario)
+        {
+            List<Ciclo> Ciclos = _context.Ciclos.Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+
+            Ciclo? CicloInicio = Ciclos.FirstOrDefault(c => c.InicioCiclo == FechaSangrado);
+            if (CicloInicio != null) return (CicloInicio, "inicio");
+
+            Ciclo? CicloFinal = Ciclos.FirstOrDefault(c => c.InicioCiclo.AddDays((int) c.DuracionMenstruacion) == FechaSangrado.AddDays(1));
+            if (CicloFinal != null) return (CicloFinal, "final");
+
+            Ciclo? CicloMediante = Ciclos.FirstOrDefault(c => 
+            {
+                return FechaSangrado < c.InicioCiclo.AddDays((int) c.DuracionMenstruacion) && FechaSangrado > c.InicioCiclo;
+            });
+            if (CicloFinal != null) return (CicloFinal, "mediante");
+
+            return (null, string.Empty);
+        }
     }
 }

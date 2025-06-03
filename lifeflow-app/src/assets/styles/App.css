@@ -382,6 +382,34 @@ form#daily-data {
   color: #FFFFFF;
   font-size: 20px;
 }
+.selected-day--controller {
+  display: flex;
+  gap: 0.5rem;
+}
+.selected-day--controller button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.25rem;
+}
+.selected-day--controller button svg {
+  height: 30px;
+  width: auto;
+}
+.selected-day--controller .blood-confirm {
+  color: #FFFFFF;
+  background-color: #FF4D94;
+}
+.selected-day--controller .blood-confirm:hover {
+  background-color: #c2185b;
+}
+.selected-day--controller .blood-delete {
+  color: #c2185b;
+  background-color: #ffffff;
+}
+.selected-day--controller .blood-delete:hover {
+  background-color: #f5f5f4;
+}
 
 .form-property {
   display: flex;

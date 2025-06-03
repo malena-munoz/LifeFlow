@@ -34,6 +34,66 @@ export async function CiclosTrimestre(id, nombre, apellidos) {
     }
 }
 // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export async function RegistrarSangrado(id, nombre, apellidos, fecha) {
+
+    const opciones = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Nombre: nombre,
+            Apellidos: apellidos,
+            Fecha: fecha
+        })
+    };
+
+    try {
+        const response = await fetch(`https://localhost:7245/api/ciclos/agregar-sangrado/${id}`, opciones);
+
+        if (!response.ok) {
+            const error = await response.json();
+            notyf.error(`Error del servidor (${error.status}): ${error.title}`);
+            return;
+        }
+
+        notyf.success("Sangrado registrado.");
+
+    } catch (error) {
+        notyf.error("Error del servidor al registrar el sangrado.");
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export async function BorrarSangrado(id, nombre, apellidos, fecha) {
+
+    const opciones = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Nombre: nombre,
+            Apellidos: apellidos,
+            Fecha: fecha
+        })
+    };
+
+    try {
+        const response = await fetch(`https://localhost:7245/api/ciclos/borrar-sangrado/${id}`, opciones);
+
+        if (!response.ok) {
+            const error = await response.json();
+            notyf.error(`Error del servidor (${error.status}): ${error.title}`);
+            return;
+        }
+
+        notyf.success("Sangrado borrado.");
+
+    } catch (error) {
+        notyf.error("Error del servidor al borrar el sangrado.");
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 export function DiasDeSangrado(ciclos) {
     let dias = [];
 
@@ -41,12 +101,19 @@ export function DiasDeSangrado(ciclos) {
         ciclos.forEach(c => {
             let fechaInicio = new Date(c.inicioCiclo);
 
-            for (let i = 0; i < c.duracionMenstruacion; i++) {
-                let fecha = new Date(fechaInicio); // Copiar fecha original
-                fecha.setDate(fecha.getDate() + i); // Sumarle días correctamente
+            if (c.duracionMenstruacion > 0) {
+                for (let i = 0; i < c.duracionMenstruacion; i++) {
+                    let fecha = new Date(fechaInicio); // Copiar fecha original
+                    fecha.setDate(fecha.getDate() + i); // Sumarle días correctamente
+                    dias.push({ 
+                        dia: CurrentDate(fecha.getDate(), fecha.getMonth(), fecha.getFullYear()), 
+                        esPrediccion: c.esPrediccion 
+                    });
+                }
+            } else {
                 dias.push({ 
-                    dia: CurrentDate(fecha.getDate(), fecha.getMonth(), fecha.getFullYear()), 
-                    esPrediccion: c.esPrediccion 
+                    dia: CurrentDate(fechaInicio.getDate(), fechaInicio.getMonth(), fechaInicio.getFullYear()), 
+                    esPrediccion: false
                 });
             }
         });

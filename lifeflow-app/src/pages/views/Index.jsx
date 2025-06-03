@@ -1,13 +1,14 @@
-import { useMemo } from "react";
-import { CalendarObject } from "../../services/DateTimeService";
+import { CalendarObject, CurrentDate } from "../../services/DateTimeService";
 import Calendar from "../../components/custom/Calendar";
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { HorizontalRuleRounded } from '@mui/icons-material';
 import { Form } from 'react-bootstrap';
 import { GuardarInformacionDiaria, InformacionDiariaTrimestre } from "../../services/InformacionDiariaService";
-import { CurrentDate } from "../../services/DateTimeService";
 import { SpanishDateString } from "../../services/Methods";
+import { ReactComponent as BloodCellsIcon } from 'healthicons/public/icons/svg/filled/body/blood_cells.svg';
+import { ReactComponent as CleaningIcon } from 'healthicons/public/icons/svg/filled/objects/cleaning.svg';
+import { RegistrarSangrado, BorrarSangrado } from "../../services/CicloService";
 
 export default function Index(props){
     // Datos del usuario
@@ -16,8 +17,11 @@ export default function Index(props){
 
     const recordatorios = props.reminders;
     const ciclos = props.ciclos;
+    const sangrados = props.sangrados;
     const calendar_obj = useMemo(() => CalendarObject(), []);
     const [mesSeleccionado, setMesSeleccionado] = useState(calendar_obj.actual);
+
+    const [estadoSangradoDia, setEstadoSangradoDia] = useState(true);
 
     // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
     //  Variables para acceso a datos
@@ -108,6 +112,14 @@ export default function Index(props){
         GuardarInformacionDiaria(user.sub, user.given_name, user.family_name, informacion_diaria);
     }
 
+    const RegistrarDiaSangrado = function() {
+        RegistrarSangrado(user.sub, user.given_name, user.family_name, CurrentDate(datoDia, String(datoMes+1), datoAnio));
+    }
+
+    const BorrarDiaSangrado = function() {
+        BorrarSangrado(user.sub, user.given_name, user.family_name, CurrentDate(datoDia, String(datoMes+1), datoAnio));
+    }
+
     return (
         <article>
             <Calendar 
@@ -117,16 +129,35 @@ export default function Index(props){
             informacionDiaria={informacionDiaria}
             calendarObj={calendar_obj}
             ciclos={ciclos}
+            sangrados={sangrados}
             mesSeleccionado={mesSeleccionado}
             setMesSeleccionado={setMesSeleccionado}
+            setEstadoSangradoDia={setEstadoSangradoDia}
             />
             <div className="flex-grow-1 d-flex flex-column">
-                <div className="bg-azul-medio rounded-1 p-3">
+                <div className="bg-azul-medio rounded-1 p-3 d-flex flex-column gap-3">
                     <div className="selected-day--info">
                         <i className="fi fi-rr-daily-calendar me-1"></i>
                         <span className="text-decoration-underline">Día seleccionado: </span>
                         {SpanishDateString(CurrentDate(datoDia, Number(datoMes + 1), datoAnio))}
                     </div>
+                    {estadoSangradoDia != null && (
+                        <div className="selected-day--controller">
+                            {estadoSangradoDia ? (
+                                <button className="blood-delete"
+                                onClick={() => BorrarDiaSangrado()}>
+                                    <CleaningIcon/>
+                                    Borrar sangrado
+                                </button>
+                            ) : (
+                                <button className="blood-confirm" 
+                                onClick={() => RegistrarDiaSangrado()}>
+                                    <BloodCellsIcon/>
+                                    Registrar sangrado
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <form id="daily-data" className="overflow-auto" onSubmit={(e) => {e.preventDefault();} }>
                     <div className="form-property property-contained">

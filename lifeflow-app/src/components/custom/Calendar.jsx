@@ -15,6 +15,7 @@ export default function Calendar (props) {
     const calendar_obj = props.calendarObj;
     const mesSeleccionado = props.mesSeleccionado;
     const setMesSeleccionado = props.setMesSeleccionado;
+    const setEstadoSangradoDia = props.setEstadoSangradoDia;
 
     const datoDia = props.dia;
     const setDatoDia = props.setDia;
@@ -26,7 +27,7 @@ export default function Calendar (props) {
     const informacionDiaria = props.informacionDiaria;
 
     const ciclos = props.ciclos;
-    const sangrados = DiasDeSangrado(ciclos);
+    const sangrados = props.sangrados;
 
     const Calendar_CompararMesSeleccionado = (fecha) => {
         return (
@@ -61,6 +62,10 @@ export default function Calendar (props) {
         setDatoAnio(nuevo_anio);
         document.querySelectorAll('.day').forEach(d => d.classList.remove('day-selected'));
         dia_obj.classList.add('day-selected');
+        let dia_tarde = new Date(CurrentDate(nuevo_dia, Number(nuevo_mes+1), nuevo_anio)) > new Date();
+        let sangrado = dia_obj.querySelector('.day-number').classList.contains('day-period') ||
+            dia_obj.querySelector('.day-number').classList.contains('day-period--estimated');
+        setEstadoSangradoDia(dia_tarde ? null : sangrado);
     }
 
     const Calendar_TieneInformacionDiaria = function(var_anio, var_mes, var_dia) {

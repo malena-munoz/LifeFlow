@@ -7,7 +7,7 @@ import Index from './views/Index';
 import Reminders from './views/Reminders';
 import { GetGoogleReminders } from "../services/Google";
 import { AgruparRecordatoriosPorDia } from "../services/RecordatoriosService";
-import { CiclosTrimestre } from "../services/CicloService";
+import { CiclosTrimestre, DiasDeSangrado } from "../services/CicloService";
 
 
 export default function Main(props) {
@@ -20,6 +20,7 @@ export default function Main(props) {
     // DATOS RELACIONADOS CON CICLOS Y RECORDATORIOS
     const reminders = React.useRef([]);
     const ciclos = React.useRef([]);
+    const [sangrados, setSangrados] = useState([]);
 
     const renderPage = () => {
         switch(page){
@@ -29,6 +30,7 @@ export default function Main(props) {
                 token={login.token}
                 reminders={reminders}
                 ciclos={ciclos.current}
+                sangrados={sangrados}
                 />;
             case 2:
                 return <Reminders 
@@ -48,6 +50,7 @@ export default function Main(props) {
         const fetchCiclos = async () => {
             const ciclos_trimestre = await CiclosTrimestre(login.user.sub, login.user.given_name, login.user.family_name);
             ciclos.current = ciclos_trimestre;
+            setSangrados(DiasDeSangrado(ciclos_trimestre));
         };
         checkIfNewUser();
         fetchCiclos();
