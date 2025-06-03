@@ -16,6 +16,7 @@ export default function Calendar (props) {
     const mesSeleccionado = props.mesSeleccionado;
     const setMesSeleccionado = props.setMesSeleccionado;
     const setEstadoSangradoDia = props.setEstadoSangradoDia;
+    const setInfoActual = props.setInfoActual;
 
     const datoDia = props.dia;
     const setDatoDia = props.setDia;
@@ -60,12 +61,18 @@ export default function Calendar (props) {
         setDatoDia(nuevo_dia);
         setDatoMes(nuevo_mes);
         setDatoAnio(nuevo_anio);
+
         document.querySelectorAll('.day').forEach(d => d.classList.remove('day-selected'));
         dia_obj.classList.add('day-selected');
+
         let dia_tarde = new Date(CurrentDate(nuevo_dia, Number(nuevo_mes+1), nuevo_anio)) > new Date();
         let sangrado = dia_obj.querySelector('.day-number').classList.contains('day-period') ||
             dia_obj.querySelector('.day-number').classList.contains('day-period--estimated');
+
         setEstadoSangradoDia(dia_tarde ? null : sangrado);
+
+        let info = informacionDiaria?.find(i => i.fecha == CurrentDate(nuevo_dia, Number(nuevo_mes + 1), nuevo_anio));
+        setInfoActual(info);
     }
 
     const Calendar_TieneInformacionDiaria = function(var_anio, var_mes, var_dia) {

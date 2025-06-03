@@ -93,6 +93,27 @@ namespace lifeflow_api.Controllers
                             CicloEnDiaDeSangrado.Ciclo.InicioCiclo = CicloEnDiaDeSangrado.Posicion.Equals("antes") ?
                                 CicloEnDiaDeSangrado.Ciclo.InicioCiclo.AddDays(-1) : CicloEnDiaDeSangrado.Ciclo.InicioCiclo;
 
+                            Ciclo? SangradoAproximado = _context.Ciclos
+                                .FirstOrDefault(delegate(Ciclo c)
+                                {
+                                    bool Apoximado = CicloEnDiaDeSangrado.Posicion.Equals("antes") ?
+                                        c.InicioCiclo == CicloEnDiaDeSangrado.Ciclo.InicioCiclo.AddDays(-1):
+                                        c.InicioCiclo == CicloEnDiaDeSangrado.Ciclo
+                                            .InicioCiclo.AddDays((int)CicloEnDiaDeSangrado.Ciclo.DuracionMenstruacion);
+
+                                    return Apoximado && c.EsPrediccion
+                                    && c.DuracionCiclo.Equals(0) && c.DuracionMenstruacion.Equals(0);
+                                });
+
+                            if (SangradoAproximado != null)
+                            {
+                                CicloEnDiaDeSangrado.Ciclo.DuracionMenstruacion += 1;
+                                CicloEnDiaDeSangrado.Ciclo.InicioCiclo = CicloEnDiaDeSangrado.Posicion.Equals("antes") ?
+                                    CicloEnDiaDeSangrado.Ciclo.InicioCiclo.AddDays(-1) : CicloEnDiaDeSangrado.Ciclo.InicioCiclo;
+
+                                _context.Remove(SangradoAproximado);
+                            }
+
                             _context.Update(CicloEnDiaDeSangrado.Ciclo);
                             _context.SaveChanges();
                         }
@@ -174,7 +195,7 @@ namespace lifeflow_api.Controllers
                             }
                             else
                             {
-                                return BadRequest();
+                                return BadRequest(new{ status = 400, title = "No se puede borrar un sangrado entre periodos de sangrado." });
                             }
                         }
 

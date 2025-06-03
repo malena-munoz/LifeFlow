@@ -107,7 +107,9 @@ namespace lifeflow_api.Services
         // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
         public (Ciclo? Ciclo, string Posicion) ObtenerCicloConInicioCercano(DateOnly FechaSangrado, string IdUsuario)
         {
-            List<Ciclo> Ciclos = _context.Ciclos.Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+            List<Ciclo> Ciclos = _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario) && !c.DuracionMenstruacion.Equals(0) 
+                && !c.DuracionCiclo.Equals(0)).ToList();
             
             var CicloAntes = Ciclos.FirstOrDefault(c => c.InicioCiclo.AddDays(-1) == FechaSangrado);
             if (CicloAntes != null) return (CicloAntes, "antes");
@@ -120,19 +122,15 @@ namespace lifeflow_api.Services
         // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
         public (Ciclo? Ciclo, string Posicion) ObtenerCicloRelativo(DateOnly FechaSangrado, string IdUsuario)
         {
-            List<Ciclo> Ciclos = _context.Ciclos.Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+            List<Ciclo> Ciclos = _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario) && !c.DuracionMenstruacion.Equals(0)
+                && !c.DuracionCiclo.Equals(0)).ToList();
 
             Ciclo? CicloInicio = Ciclos.FirstOrDefault(c => c.InicioCiclo == FechaSangrado);
             if (CicloInicio != null) return (CicloInicio, "inicio");
 
             Ciclo? CicloFinal = Ciclos.FirstOrDefault(c => c.InicioCiclo.AddDays((int) c.DuracionMenstruacion) == FechaSangrado.AddDays(1));
             if (CicloFinal != null) return (CicloFinal, "final");
-
-            Ciclo? CicloMediante = Ciclos.FirstOrDefault(c => 
-            {
-                return FechaSangrado < c.InicioCiclo.AddDays((int) c.DuracionMenstruacion) && FechaSangrado > c.InicioCiclo;
-            });
-            if (CicloFinal != null) return (CicloFinal, "mediante");
 
             return (null, string.Empty);
         }

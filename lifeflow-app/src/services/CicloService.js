@@ -83,6 +83,7 @@ export async function BorrarSangrado(id, nombre, apellidos, fecha) {
 
         if (!response.ok) {
             const error = await response.json();
+            console.log(error);
             notyf.error(`Error del servidor (${error.status}): ${error.title}`);
             return;
         }

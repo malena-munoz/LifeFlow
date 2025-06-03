@@ -90,9 +90,17 @@ namespace lifeflow_api.Controllers
 
                     if (UsuarioRegistrado)
                     {
-                        InformacionDiaria.Id = Guid.NewGuid();
-                        _context.InformacionDiaria.Add(InformacionDiaria);
-                        _context.SaveChanges();
+                        if (InformacionDiaria.Id == Guid.Empty)
+                        {
+                            InformacionDiaria.Id = Guid.NewGuid();
+                            _context.InformacionDiaria.Add(InformacionDiaria);
+                            _context.SaveChanges();
+                        } 
+                        else
+                        {
+                            _context.Update(InformacionDiaria);
+                            _context.SaveChanges();
+                        }
 
                         return NoContent();
                     }

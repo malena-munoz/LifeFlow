@@ -45,6 +45,8 @@ export default function Index(props){
     const [datoMes, setDatoMes] = useState('');
     // Año
     const [datoAnio, setDatoAnio] = useState(2025);
+    // Información diaria actual
+    const [infoActual, setInfoActual] = useState(null);
 
     // Efectos
     const notasRef = useRef(null);
@@ -99,6 +101,7 @@ export default function Index(props){
 
     const RegistrarDatosDiarios = function() {
         let informacion_diaria = {
+            Id: infoActual?.id,
             IdUsuario: user.sub,
             Fecha: CurrentDate(datoDia, String(datoMes+1), datoAnio),
             PruebaEmbarazo: datoPruebaEmbarazo.trim(),
@@ -120,6 +123,23 @@ export default function Index(props){
         BorrarSangrado(user.sub, user.given_name, user.family_name, CurrentDate(datoDia, String(datoMes+1), datoAnio));
     }
 
+    useEffect(() => {
+        if (infoActual !== null && infoActual !== undefined) {
+            setDatoEmociones(infoActual?.emociones);
+            setDatoMolestias(infoActual?.molestias);
+            setDatoSintomasCuerpo(infoActual?.sintomas);
+            setDatoFluidoFemenino(infoActual?.fluidoFemenino);
+            setDatoPruebaEmbarazo(infoActual?.pruebaEmbarazo);
+        } else {
+            setDatoEmociones([]);
+            setDatoMolestias([]);
+            setDatoSintomasCuerpo([]);
+            setDatoFluidoFemenino([]);
+            setDatoPruebaEmbarazo('No realizado');
+        }
+    }, [infoActual]);
+
+
     return (
         <article>
             <Calendar 
@@ -133,6 +153,7 @@ export default function Index(props){
             mesSeleccionado={mesSeleccionado}
             setMesSeleccionado={setMesSeleccionado}
             setEstadoSangradoDia={setEstadoSangradoDia}
+            setInfoActual={setInfoActual}
             />
             <div className="flex-grow-1 d-flex flex-column">
                 <div className="bg-azul-medio rounded-1 p-3 d-flex flex-column gap-3">
@@ -170,7 +191,9 @@ export default function Index(props){
                         {Emotions().map((emocion) => (
                             <div
                             key={emocion.id}
-                            className={`icon-item ${datoEmociones.includes(String(emocion.id)) ? 'selected' : ''}`}
+                            className={`icon-item 
+                                ${datoEmociones.includes(String(emocion.id)) ? 'selected' : ''}
+                            `}
                             onClick={() => toggleSeleccion(emocion.id)}
                             >
                                 <i className={emocion.icon}></i> {emocion.label}
@@ -188,7 +211,9 @@ export default function Index(props){
                             {BodyParts().map((parte) => (
                                 <div
                                 key={parte.id}
-                                className={`icon-item ${datoMolestias.includes(String(parte.id)) ? 'selected' : ''}`}
+                                className={`icon-item 
+                                    ${datoMolestias.includes(String(parte.id)) ? 'selected' : ''}
+                                `}
                                 onClick={() => toggleBodyParts(parte.id)}
                                 >
                                 <parte.icon height={20} width={20} /> {parte.label}
@@ -206,7 +231,9 @@ export default function Index(props){
                             {Symptoms().map((parte) => (
                                 <div
                                 key={parte.id}
-                                className={`icon-item ${datoSintomasCuerpo.includes(String(parte.id)) ? 'selected' : ''}`}
+                                className={`icon-item 
+                                    ${datoSintomasCuerpo.includes(String(parte.id)) ? 'selected' : ''}
+                                `}
                                 onClick={() => toggleSymtoms(parte.id)}
                                 >
                                 <parte.icon height={20} width={20} /> {parte.label}
@@ -224,7 +251,9 @@ export default function Index(props){
                         {FemFluid().map((fluido) => (
                             <div
                             key={fluido.id}
-                            className={`icon-item ${datoFluidoFemenino.includes(String(fluido.id)) ? 'selected' : ''}`}
+                            className={`icon-item 
+                                ${datoFluidoFemenino.includes(String(fluido.id)) ? 'selected' : ''}
+                            `}
                             onClick={() => toggleFluidoFemenino(fluido.id)}
                             >
                             <i className={fluido.icon}></i> {fluido.label}
@@ -241,27 +270,27 @@ export default function Index(props){
                         <div className="d-flex flex-column flex-wrap gap-2">
                             <div className="form-check">
                                 <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
-                                className="form-check-input" type="radio" defaultChecked
+                                className="form-check-input" type="radio" defaultChecked checked={datoPruebaEmbarazo.trim() == 'No realizado'}
                                 name="pregnancy-test" id="pregnancy-test-1"/>
                                 <label className="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
                             </div>
                             <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Positivo'}
                                 className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
                                 <label className="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
                             </div>
                             <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Negativo'}
                                 className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
                                 <label className="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
                             </div>
                             <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Línea débil'}
                                 className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
                                 <label className="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
                             </div>
                             <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'No válido'}
                                 className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
                                 <label className="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
                             </div>
@@ -278,6 +307,7 @@ export default function Index(props){
                             id="notes" 
                             as='textarea' 
                             placeholder='Escribe alguna nota adicional.' 
+                            defaultValue={infoActual?.notas}
                             multiple
                             onChange={(e) => setDatoNotas(e.target.value)}/>
                         </div>
