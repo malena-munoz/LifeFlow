@@ -44,8 +44,32 @@ namespace lifeflow_api.Controllers
                         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre = _cicloService.PeriodoTrimestre();
                         List<Ciclo> CiclosTrimestre = _context.Ciclos
                             .Where(i => i.IdUsuario.Equals(Id))
-                            .Where(i => i.InicioCiclo >= PeriodoTrimestre.Inicio && i.InicioCiclo <= PeriodoTrimestre.Final)
+                            .Where(i => i.InicioCiclo >= PeriodoTrimestre.Inicio.AddMonths(-1) && i.InicioCiclo <= PeriodoTrimestre.Final.AddMonths(1))
                             .ToList();
+
+                        // Si los ciclos no llegan a 6
+                        if (CiclosTrimestre.Count() < 6)
+                        {
+                            // El sistema creará nuevos ciclos hasta la fecha necesitada
+                            int Limite = PeriodoTrimestre.Final.AddMonths(1).Month - _context.Ciclos.MinBy(c => c.InicioCiclo)!.InicioCiclo.Month;
+
+                            for (int Index = 0; Index < Limite; Index++)
+                            {
+                                Ciclo Ciclo = _cicloService.PredecirProximoCicloDesdeLista(CiclosTrimestre);
+
+                                if (Ciclo != null)
+                                {
+                                    CiclosTrimestre.Add(Ciclo);
+                                    _context.Add(Ciclo);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                        }
+                        else if (!CiclosTrimestre.Any())
+                        {
+                            CiclosTrimestre = await _cicloService.PredecirCiclosRestantes(Id, PeriodoTrimestre);
+                        }
+
 
                         return Ok(CiclosTrimestre);
                     }

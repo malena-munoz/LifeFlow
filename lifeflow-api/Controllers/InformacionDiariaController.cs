@@ -46,7 +46,7 @@ namespace lifeflow_api.Controllers
                         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre = _cicloService.PeriodoTrimestre();
                         List<InformacionDiaria> InformacionDiariaTrimestre = _context.InformacionDiaria
                             .Where(i => i.IdUsuario.Equals(Id))
-                            .Where(i => i.Fecha >= PeriodoTrimestre.Inicio && i.Fecha <= PeriodoTrimestre.Final)
+                            .Where(i => i.Fecha >= PeriodoTrimestre.Inicio.AddMonths(-1) && i.Fecha <= PeriodoTrimestre.Final.AddMonths(1))
                             .ToList();
 
                         return Ok(InformacionDiariaTrimestre);

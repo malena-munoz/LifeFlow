@@ -1,7 +1,10 @@
 ﻿using lifeflow_api.Models;
 using lifeflow_api.Models.Scaffold;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
+using System.Data;
 using System.Security.Cryptography;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace lifeflow_api.Services
 {
@@ -11,9 +14,14 @@ namespace lifeflow_api.Services
         DateOnly ObtenerFechaUltimoCiclo(int Dia);
         float DuracionCiclo(string Duracion);
         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre();
+        // -------------------------------
         (Ciclo ciclo1, Ciclo ciclo2) PredecirDosSiguientesCiclos(Ciclo CicloBase);
+        Ciclo PredecirProximoCicloDesdeLista(List<Ciclo> Ciclos);
+        Task<List<Ciclo>> PredecirCiclosRestantes(string IdUsuario, (DateOnly Inicio, DateOnly Final) PeriodoTrimestre);
+        // -------------------------------
         Ciclo ObtenerDiaDeSangrado(DateOnly FechaSangrado);
         Ciclo? ObtenerCicloDeUnDiaDeSangrado(DateOnly FechaSangrado, string IdUsuario);
+        // -------------------------------
         (Ciclo? Ciclo, string Posicion) ObtenerCicloConInicioCercano(DateOnly FechaSangrado, string IdUsuario);
         (Ciclo? Ciclo, string Posicion) ObtenerCicloRelativo(DateOnly FechaSangrado, string id);
     }
@@ -83,6 +91,35 @@ namespace lifeflow_api.Services
             return (PrimerCicloPredicho, SegundoCicloPredicho);
         }
         // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public Ciclo PredecirProximoCicloDesdeLista(List<Ciclo> Ciclos)
+        {
+            List<Ciclo> CiclosValidos = Ciclos
+                .Where(c => c.DuracionCiclo > 0 && c.DuracionMenstruacion > 0)
+                .OrderBy(c => c.InicioCiclo)
+                .ToList();
+
+            if (CiclosValidos.Count == 0) return null!;
+
+            float PromedioDuracionCiclo = CiclosValidos.Average(c => c.DuracionCiclo);
+            float PromedioDuracionMenstruacion = CiclosValidos.Average(c => c.DuracionMenstruacion);
+
+            Ciclo UltimoCiclo = CiclosValidos.Last();
+            DateOnly InicioProximo = UltimoCiclo.InicioCiclo.AddDays((int)Math.Round(PromedioDuracionCiclo));
+
+            Ciclo CicloPredicho = new Ciclo
+            {
+                Id = Guid.NewGuid(),
+                IdUsuario = UltimoCiclo.IdUsuario,
+                IdEmbarazazo = null,
+                InicioCiclo = InicioProximo,
+                DuracionCiclo = (float) Math.Round(PromedioDuracionCiclo),
+                DuracionMenstruacion = (float) Math.Round(PromedioDuracionMenstruacion),
+                EsPrediccion = true
+            };
+
+            return CicloPredicho;
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
         public Ciclo ObtenerDiaDeSangrado(DateOnly FechaSangrado)
         {
             Ciclo? DiaDeSangrado = _context.Ciclos
@@ -133,6 +170,23 @@ namespace lifeflow_api.Services
             if (CicloFinal != null) return (CicloFinal, "final");
 
             return (null, string.Empty);
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public async Task<List<Ciclo>> PredecirCiclosRestantes(string IdUsuario, (DateOnly Inicio, DateOnly Final) PeriodoTrimestre)
+        {
+            List<Ciclo> Ciclos = _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario) && !c.DuracionMenstruacion.Equals(0)
+                && !c.DuracionCiclo.Equals(0)).OrderBy(c => c.InicioCiclo).ToList();
+                 
+            while (!Ciclos.Any(c => c.InicioCiclo > PeriodoTrimestre.Final.AddMonths(1)))
+            {
+                Ciclo Ciclo = PredecirProximoCicloDesdeLista(Ciclos);
+                Ciclos.Add(Ciclo);
+                _context.Add(Ciclo);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ciclos;
         }
     }
 }
