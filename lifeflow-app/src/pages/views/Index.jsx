@@ -8,7 +8,7 @@ import { GuardarInformacionDiaria, InformacionDiariaTrimestre } from "../../serv
 import { SpanishDateString } from "../../services/Methods";
 import { ReactComponent as BloodCellsIcon } from 'healthicons/public/icons/svg/filled/body/blood_cells.svg';
 import { ReactComponent as CleaningIcon } from 'healthicons/public/icons/svg/filled/objects/cleaning.svg';
-import { RegistrarSangrado, BorrarSangrado } from "../../services/CicloService";
+import { RegistrarSangrado, BorrarSangrado, Embarazo } from "../../services/CicloService";
 
 export default function Index(props){
     // Datos del usuario
@@ -22,6 +22,7 @@ export default function Index(props){
     const [mesSeleccionado, setMesSeleccionado] = useState(calendar_obj.actual);
 
     const [estadoSangradoDia, setEstadoSangradoDia] = useState(true);
+    const [embarazo, setEmbarazo] = useState(null);
 
     // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
     //  Variables para acceso a datos
@@ -139,6 +140,13 @@ export default function Index(props){
         }
     }, [infoActual]);
 
+    useEffect(() => {
+        async function fetchEmbarazo() {
+            const data = await Embarazo(user.sub, user.given_name, user.family_name);
+            setEmbarazo(data); 
+        }
+        fetchEmbarazo();
+    }, []);
 
     return (
         <article>
@@ -146,16 +154,18 @@ export default function Index(props){
             dia={datoDia} setDia={setDatoDia} 
             mes={datoMes} setMes={setDatoMes} 
             anio={datoAnio} setAnio={setDatoAnio}
+            embarazo={embarazo}
             informacionDiaria={informacionDiaria}
             calendarObj={calendar_obj}
             ciclos={ciclos}
+            user={user}
             sangrados={sangrados}
             mesSeleccionado={mesSeleccionado}
             setMesSeleccionado={setMesSeleccionado}
             setEstadoSangradoDia={setEstadoSangradoDia}
             setInfoActual={setInfoActual}
             />
-            <div className="flex-grow-1 d-flex flex-column">
+            <div className="flex-grow-1 d-flex flex-column" id="daily-data-nav">
                 <div className="bg-azul-medio rounded-1 p-3 d-flex flex-column gap-3">
                     <div className="selected-day--info">
                         <i className="fi fi-rr-daily-calendar me-1"></i>
@@ -267,33 +277,44 @@ export default function Index(props){
                             <HorizontalRuleRounded/>
                             <span>¿Cuál fue el resultado?</span>
                         </div>
-                        <div className="d-flex flex-column flex-wrap gap-2">
-                            <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
-                                className="form-check-input" type="radio" defaultChecked checked={datoPruebaEmbarazo.trim() == 'No realizado'}
-                                name="pregnancy-test" id="pregnancy-test-1"/>
-                                <label className="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
-                            </div>
-                            <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Positivo'}
-                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
-                                <label className="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
-                            </div>
-                            <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Negativo'}
-                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
-                                <label className="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
-                            </div>
-                            <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Línea débil'}
-                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
-                                <label className="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
-                            </div>
-                            <div className="form-check">
-                                <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'No válido'}
-                                className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
-                                <label className="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
-                            </div>
+                        <div className="d-flex flex-column flex-wrap gap-2">                          
+                            {embarazo === null ? 
+                            (
+                                <>
+                                    <div className="form-check">
+                                        <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)}
+                                        className="form-check-input" type="radio" defaultChecked checked={datoPruebaEmbarazo.trim() == 'No realizado'}
+                                        name="pregnancy-test" id="pregnancy-test-1"/>
+                                        <label className="form-check-label" htmlFor="pregnancy-test-1"> No realizado </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Positivo'}
+                                        className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-2"  />
+                                        <label className="form-check-label" htmlFor="pregnancy-test-2"> Positivo </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Negativo'}
+                                        className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-3"  />
+                                        <label className="form-check-label" htmlFor="pregnancy-test-3"> Negativo </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'Línea débil'}
+                                        className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-4"  />
+                                        <label className="form-check-label" htmlFor="pregnancy-test-4"> Línea débil </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input onChange={(e) => toggleDatoPruebaEmbarazo(e.target)} checked={datoPruebaEmbarazo.trim() == 'No válido'}
+                                        className="form-check-input" type="radio" name="pregnancy-test" id="pregnancy-test-5"  />
+                                        <label className="form-check-label" htmlFor="pregnancy-test-5"> No válido </label>
+                                    </div>
+                                </>
+                            ) 
+                            : 
+                            (
+                                <div className="form-check p-0">
+                                    <p className="fw-bold text-danger m-0">Por temas de control, no puedes cambias tus pruebas de embarazo durante un embarazo activo. Si fue un registro por error, ve al modo embarazo y borra el registro.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="form-property property-contained">

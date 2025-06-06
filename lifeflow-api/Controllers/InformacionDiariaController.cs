@@ -102,6 +102,14 @@ namespace lifeflow_api.Controllers
                             _context.SaveChanges();
                         }
 
+                        // Si se ha registrado la prueba de embarazo como positivo
+                        if (InformacionDiaria.PruebaEmbarazo.Equals("Positivo"))
+                        {
+                            Embarazo NuevoEmbarazo = _cicloService.NuevoEmbarazo(Id);
+                            _context.Embarazos.Add(NuevoEmbarazo);
+                            _context.SaveChanges();
+                        }
+
                         return NoContent();
                     }
                     else

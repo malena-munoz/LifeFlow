@@ -24,6 +24,8 @@ namespace lifeflow_api.Services
         // -------------------------------
         (Ciclo? Ciclo, string Posicion) ObtenerCicloConInicioCercano(DateOnly FechaSangrado, string IdUsuario);
         (Ciclo? Ciclo, string Posicion) ObtenerCicloRelativo(DateOnly FechaSangrado, string id);
+        // -------------------------------
+        Embarazo NuevoEmbarazo(string IdUsuario);
     }
 
     public class CicloService : ICicloService
@@ -187,6 +189,25 @@ namespace lifeflow_api.Services
             }
 
             return Ciclos;
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public Embarazo NuevoEmbarazo(string IdUsuario)
+        {
+            List<Ciclo> Ciclos = _context.Ciclos
+               .Where(c => c.IdUsuario.Equals(IdUsuario) && !c.DuracionMenstruacion.Equals(0)
+               && !c.DuracionCiclo.Equals(0) && !c.EsPrediccion).OrderBy(c => c.InicioCiclo).ToList();
+
+            Ciclo UltimoCiclo = Ciclos.Last();
+
+            return new Embarazo
+            {
+                Id = Guid.NewGuid(),
+                IdUsuario = IdUsuario,
+                EstimacionParto = UltimoCiclo.InicioCiclo.AddDays(280),  // Regla de Naegele
+                EstimacionFecundacion = UltimoCiclo.InicioCiclo.AddDays(14),
+                Activo = true
+            };
+
         }
     }
 }

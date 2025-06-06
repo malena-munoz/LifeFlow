@@ -51,7 +51,7 @@ namespace lifeflow_api.Controllers
                         if (CiclosTrimestre.Count() < 6)
                         {
                             // El sistema creará nuevos ciclos hasta la fecha necesitada
-                            int Limite = PeriodoTrimestre.Final.AddMonths(1).Month - _context.Ciclos.MinBy(c => c.InicioCiclo)!.InicioCiclo.Month;
+                            int Limite = PeriodoTrimestre.Final.AddMonths(1).Month - _context.Ciclos.Min(c => c.InicioCiclo).Month;
 
                             for (int Index = 0; Index < Limite; Index++)
                             {
@@ -241,8 +241,101 @@ namespace lifeflow_api.Controllers
             }
         }
 
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        [HttpPost("embarazo/{id}")]
+        public async Task<ActionResult<Embarazo>> ObtenerEmbarazo(string Id, [FromBody] JsonElement Json)
+        {
+            try
+            {
+                // Nombre, Apellidos
+                string Nombre = Json.GetProperty("Nombre").GetString() ?? null!;
+                string Apellidos = Json.GetProperty("Apellidos").GetString() ?? null!;
 
+                if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(Apellidos) && !string.IsNullOrWhiteSpace(Id))
+                {
+                    bool UsuarioRegistrado = await _context.Usuarios
+                        .AnyAsync(u => u.Id.Equals(Id) && u.Nombre.Equals(Nombre) && u.Apellidos.Equals(Apellidos));
 
+                    if (UsuarioRegistrado)
+                    {
+                        Embarazo? Embarazo = await _context.Embarazos
+                            .FirstOrDefaultAsync(e => e.IdUsuario.Equals(Id) && e.Activo && DateOnly.FromDateTime(DateTime.Now) >= e.EstimacionFecundacion);
+
+                        return Embarazo != null ? Ok(Embarazo) : BadRequest();
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        [HttpPost("borrar-embarazo/{id}")]
+        public async Task<ActionResult> BorrarEmbarazo(string Id, [FromBody] JsonElement Json)
+        {
+            try
+            {
+                // Nombre, Apellidos y Fecha de Sangradu
+                string Nombre = Json.GetProperty("Nombre").GetString() ?? null!;
+                string Apellidos = Json.GetProperty("Apellidos").GetString() ?? null!;
+                string IdEmbarazo = Json.GetProperty("IdEmbarazo").GetString() ?? null!;
+
+                if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(Apellidos) 
+                    && !string.IsNullOrWhiteSpace(Id) && !string.IsNullOrWhiteSpace(IdEmbarazo))
+                {
+                    bool UsuarioRegistrado = await _context.Usuarios
+                        .AnyAsync(u => u.Id.Equals(Id) && u.Nombre.Equals(Nombre) && u.Apellidos.Equals(Apellidos));
+
+                    if (UsuarioRegistrado)
+                    {
+                        Embarazo? Embarazo = await _context.Embarazos
+                            .FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(IdEmbarazo)));
+
+                        if (Embarazo != null)
+                        {
+                            List<InformacionDiaria> InfoEmbarazo = _context.InformacionDiaria
+                                .Where(i => i.IdUsuario.Equals(Id) && i.Fecha >= Embarazo.EstimacionFecundacion && i.PruebaEmbarazo.Equals("Positivo")).ToList();
+
+                            foreach(InformacionDiaria Info in InfoEmbarazo)
+                            {
+                                Info.PruebaEmbarazo = "No realizado";
+                            }
+
+                            _context.UpdateRange(InfoEmbarazo);
+                            _context.Remove(Embarazo);
+                            _context.SaveChanges();
+
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest();
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
 
     }
 }

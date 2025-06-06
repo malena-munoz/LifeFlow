@@ -2,9 +2,10 @@ import { CalendarObject, Days, IsCurrentDay, CurrentDate } from "../../services/
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
 import { useState, useMemo, useEffect } from "react";
 import { HorizontalRuleRounded, Circle } from '@mui/icons-material';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { OverlayTrigger, Popover, FormCheck } from 'react-bootstrap';
 import { SpanishDateString, GetGoogleColorById } from '../../services/Methods'; 
-import { DiasDeSangrado, EsDiaDeSangrado, ClaseSangrado } from "../../services/CicloService";
+import { DiasDeSangrado, EsDiaDeSangrado, ClaseSangrado, BorrarEmbarazo } from "../../services/CicloService";
+import MomIcon from '../../assets/img/mom.png';
 
 export default function Calendar (props) {
 
@@ -26,9 +27,11 @@ export default function Calendar (props) {
     const setDatoAnio = props.setAnio;
 
     const informacionDiaria = props.informacionDiaria;
+    const user = props.user;
 
     const ciclos = props.ciclos;
     const sangrados = props.sangrados;
+    const embarazo = props.embarazo;
 
     const Calendar_CompararMesSeleccionado = (fecha) => {
         return (
@@ -144,11 +147,73 @@ export default function Calendar (props) {
         )
     };
 
+    const handleModoEmbarazo = (e) => {
+        const isChecked = e.target.checked;
+        toggleModo(isChecked);
+    };
+
+    const toggleModo = function(isChecked) {
+        const contenedoresCiclo = document.querySelectorAll('[modo="ciclo"]');
+        const contenedoresEmbarazo = document.querySelectorAll('[modo="embarazo"]');
+        const infoDiaria = document.getElementById('daily-data-nav');
+        const calendario = document.querySelector('.calendar-container');
+
+        contenedoresCiclo.forEach(el => {
+            if (isChecked) {
+                el.setAttribute("hidden", "");
+                if (el.classList.contains('d-flex')) {
+                    el.classList.remove("d-flex");
+                    el.classList.add("d-none");
+                }
+            } else {
+                el.removeAttribute("hidden");
+                if (el.classList.contains('d-none')) {
+                    el.classList.add("d-flex");
+                    el.classList.remove("d-none");
+                }
+            }
+        });
+
+        if (isChecked) {
+            infoDiaria.classList.remove("d-flex");
+            infoDiaria.classList.add("d-none");
+            calendario.style.flex = '1';
+            calendario.style.maxWidth = 'none';
+        } else {
+            infoDiaria.classList.add("d-flex");
+            infoDiaria.classList.remove("d-none");
+            calendario.style.flex = 'none';
+            calendario.style.maxWidth = '1200px';
+        }
+
+        contenedoresEmbarazo.forEach(el => {
+            if (isChecked) {
+                el.removeAttribute("hidden");
+                if (el.classList.contains('d-none')) {
+                    el.classList.add("d-flex");
+                    el.classList.remove("d-none");
+                }
+            } else {
+                el.setAttribute("hidden", "");
+                if (el.classList.contains('d-flex')) {
+                    el.classList.remove("d-flex");
+                    el.classList.add("d-none");
+                }
+            }
+        });
+    }
+
+    useEffect(() => {
+        if (embarazo !== null) {
+            toggleModo(true);
+        }      
+    }, [embarazo]);
 
     return (
         <div className="calendar-container">
             <div className="calendar-header">
-                <div className="d-flex justify-content-center align-items-end">
+                <div className="flex-fill"></div>
+                <div className="d-flex justify-content-center align-items-end" modo="ciclo">
                     <span className={`month ${Calendar_CompararMesSeleccionado(calendar_obj.anterior.mes)}`} 
                     onClick={() => Calendar_ControlarMesSeleccionado(calendar_obj.anterior)} 
                     month={calendar_obj.anterior.mes}>
@@ -169,24 +234,33 @@ export default function Calendar (props) {
                         {calendar_obj.siguiente.nombre} 
                         <span className="year"> {calendar_obj.siguiente.anio}</span>
                     </span>
-                </div>       
+                </div>
+                <div className="d-none justify-content-center align-items-end" modo="embarazo">
+                    <h5 className="m-0 fw-bold txt-azul-oscuro">Embarazo</h5>
+                </div>
+                <div>
+                    {embarazo && (
+                        <FormCheck onChange={(e) => handleModoEmbarazo(e)} defaultChecked
+                        type="switch" label="Modo embarazo" className="m-0 float-end"/> 
+                    )}
+                </div>
             </div>
             <div className="calendar">
-                <span className="day-name">Lunes</span>
-                <span className="day-name">Martes</span>
-                <span className="day-name">Miércoles</span>
-                <span className="day-name">Jueves</span>
-                <span className="day-name">Viernes</span>
-                <span className="day-name">Sábado</span>
-                <span className="day-name">Domingo</span>               
+                <span className="day-name" modo="ciclo">Lunes</span>
+                <span className="day-name" modo="ciclo">Martes</span>
+                <span className="day-name" modo="ciclo">Miércoles</span>
+                <span className="day-name" modo="ciclo">Jueves</span>
+                <span className="day-name" modo="ciclo">Viernes</span>
+                <span className="day-name" modo="ciclo">Sábado</span>
+                <span className="day-name" modo="ciclo">Domingo</span>               
                 {Days(mesSeleccionado).map((day, index) => (    
                     day == 0 ? 
                     (
-                        <div key={index} className="day day--disabled"></div>
+                        <div key={index} className="day day--disabled" modo="ciclo"></div>
                     ) 
                     : 
                     (
-                        <div key={index}
+                        <div key={index} modo="ciclo"
                         onClick={(e) => Calendar_NuevoDiaSeleccionado(e.currentTarget, mesSeleccionado.anio, mesSeleccionado.mes, String(day))}
                         className={`
                                 day 
@@ -216,6 +290,46 @@ export default function Calendar (props) {
                         </div>
                     ) 
                 ))}
+                {embarazo && (
+                    <div hidden className="pregnancy" modo="embarazo">   
+                        <div className="d-flex align-items-center gap-4">
+                            <img src={MomIcon} alt="" />
+                            <div className="d-flex flex-column gap-2">
+                                <p className="m-0">¡Felicades {user.given_name} por tu embarazo! Nos gustaría informate de que esta bonita gestación pudo ocurrir el día <strong>{SpanishDateString(embarazo.estimacionFecundacion)}</strong> o alrededor.</p>
+                                <p className="m-0">Aun así, <span className="txt-rosa-muy-oscuro">puedes seguir tu hipotético ciclo mestrual quitando el modo embarazo. Queremos darte toda la información que sea de tu apoyo <i class="fi fi-rr-smile-beam d-inline-block"></i>.</span></p>
+                                <p>El día del parto puede rondar por el día <strong>{SpanishDateString(embarazo.estimacionParto)}</strong>.</p>
+                                <form id="parto" className="d-flex gap-3 flex-row align-items-center">
+                                    <label className="form-check-label txt-azul-oscuro fw-bold" htmlFor="pregnancy-test-1">¿En qué fecha realizaste tu parto?</label>
+                                    <input className="form-control w-auto" type="datetime-local" />     
+                                    <button className="btn-pink">Guardar</button> 
+                                    <HorizontalRuleRounded/>   
+                                    <button className="btn-blue" 
+                                    onClick={() => BorrarEmbarazo(user.sub, user.given_name, user.family_name, embarazo.id)}>Eliminar embarazo</button>         
+                                </form>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column gap-3">
+                            <p className="m-0">Aquí tienes unos enlaces de interés de información y artículos relacionados con el embarazo para que obtengas más información:</p>
+                            <ul className="list-inline">
+                                <li className="d-flex align-items-center gap-2">
+                                    <i class="fi fi-rr-browser me-1"></i><strong>Cómo mantenerte sana durante el embarazo - </strong><span className="txt-rosa-oscuro">MedlinePlus</span>: <a target="_blank" href="https://kidshealth.org/es/parents/preg-health.html">https://kidshealth.org/es/parents/preg-health.html</a>
+                                </li>
+                                <li className="d-flex align-items-center gap-2">
+                                    <i class="fi fi-rr-browser me-1"></i><strong>El embarazo - </strong><span className="txt-rosa-oscuro">MedlinePlus</span>: <a target="_blank" href="https://medlineplus.gov/spanish/pregnancy.html">https://medlineplus.gov/spanish/pregnancy.html</a>
+                                </li>
+                                <li className="d-flex align-items-center gap-2">
+                                    <i class="fi fi-rr-browser me-1"></i><strong>Etapas del embarazo - </strong><span className="txt-rosa-oscuro">OASH</span>: <a target="_blank" href="https://espanol.womenshealth.gov/pregnancy/youre-pregnant-now-what/stages-pregnancy">https://espanol.womenshealth.gov/pregnancy/youre-pregnant-now-what/stages-pregnancy</a>
+                                </li>
+                                <li className="d-flex align-items-center gap-2">
+                                    <i class="fi fi-rr-browser me-1"></i><strong>Articulos sobre el embarazo (ENG) - </strong><span className="txt-rosa-oscuro">Flo</span>: <a target="_blank" href="https://flo.health/pregnancy">https://flo.health/pregnancy</a>
+                                </li>
+                                <li className="d-flex align-items-center gap-2">
+                                    <i class="fi fi-rr-film me-1"></i><strong>8 tips para empezar el embarazo con buen pie - </strong><span className="txt-rosa-oscuro"> FisioOnline</span>: <a target="_blank" href="https://youtu.be/MINAxk2pszk?si=mcLZSUFMSGWfyh5z">https://youtu.be/MINAxk2pszk?si=mcLZSUFMSGWfyh5z</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

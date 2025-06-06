@@ -34,6 +34,64 @@ export async function CiclosTrimestre(id, nombre, apellidos) {
     }
 }
 // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export async function Embarazo(id, nombre, apellidos) {
+
+    const opciones = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Nombre: nombre,
+            Apellidos: apellidos
+        })
+    };
+
+    try {
+        const response = await fetch(`https://localhost:7245/api/ciclos/embarazo/${id}`, opciones);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        return null;
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export async function BorrarEmbarazo(id, nombre, apellidos, id_embarazo) {
+
+    const opciones = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Nombre: nombre,
+            Apellidos: apellidos,
+            IdEmbarazo: id_embarazo
+        })
+    };
+
+    try {
+        const response = await fetch(`https://localhost:7245/api/ciclos/borrar-embarazo/${id}`, opciones);
+
+        if (!response.ok) {
+            const error = await response.json();
+            notyf.error(`Error del servidor (${error.status}): ${error.title}`);
+            return;
+        }
+
+        notyf.success("Embarazo borrado.");
+
+    } catch (error) {
+        notyf.error("Error del servidor al borrar el embarazo.");
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 export async function RegistrarSangrado(id, nombre, apellidos, fecha) {
 
     const opciones = {
