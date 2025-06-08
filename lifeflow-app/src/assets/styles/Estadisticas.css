@@ -1,0 +1,60 @@
+.estadisticas-header {
+  margin-bottom: 5rem;
+}
+.estadisticas-header h1 {
+  font-size: 60px;
+}
+.estadisticas-reporte--titulo {
+  font-weight: bold;
+  font-size: 25px;
+  color: #1976D2;
+  margin: 0;
+}
+.estadisticas-reporte--mini-tabla td {
+  padding: 0.5rem !important;
+  border: 1px solid #1976D2;
+}
+.estadisticas-reporte--mini-tabla tr td:first-child {
+  color: white;
+  background-color: #1976D2;
+}
+.estadisticas-exportar {
+  position: fixed;
+  display: flex;
+  bottom: 2rem;
+  right: 2rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.egg {
+  z-index: -1;
+  position: absolute;
+  background: radial-gradient(circle at center, #f4dada 0%, #f2bebe 100%);
+  border-radius: 50%;
+  border: 2px solid #d08c8c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  animation: float 5s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(255, 182, 193, 0.6);
+}
+
+.nucleus {
+  width: 30%;
+  height: 30%;
+  background-color: #a25d5d;
+  border-radius: 50%;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}/*# sourceMappingURL=Estadisticas.css.map */

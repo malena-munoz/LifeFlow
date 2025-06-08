@@ -1,4 +1,5 @@
 ﻿using lifeflow_api.Models;
+using lifeflow_api.Models.Objects;
 using lifeflow_api.Models.Scaffold;
 using lifeflow_api.Services;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,10 @@ namespace lifeflow_api.Controllers
     public class CycleController : ControllerBase
     {
         private readonly LifeFlowContext _context;
-        private readonly IUserService _userService;
+        private readonly IUsuarioService _userService;
         private readonly ICicloService _cicloService;
 
-        public CycleController(LifeFlowContext context, IUserService userService, ICicloService cicloService)
+        public CycleController(LifeFlowContext context, IUsuarioService userService, ICicloService cicloService)
         {
             _context = context;
             _userService = userService;
@@ -41,17 +42,23 @@ namespace lifeflow_api.Controllers
 
                     if (UsuarioRegistrado)
                     {
+                        await _cicloService.ReajustarCiclos(Id);
+
                         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre = _cicloService.PeriodoTrimestre();
                         List<Ciclo> CiclosTrimestre = _context.Ciclos
                             .Where(i => i.IdUsuario.Equals(Id))
                             .Where(i => i.InicioCiclo >= PeriodoTrimestre.Inicio.AddMonths(-1) && i.InicioCiclo <= PeriodoTrimestre.Final.AddMonths(1))
                             .ToList();
-
-                        // Si los ciclos no llegan a 6
-                        if (CiclosTrimestre.Count() < 6)
+             
+                        if (!CiclosTrimestre.Any())
+                        {
+                            return BadRequest();
+                        }
+                        else if (CiclosTrimestre.Count() < 4)
                         {
                             // El sistema creará nuevos ciclos hasta la fecha necesitada
                             int Limite = PeriodoTrimestre.Final.AddMonths(1).Month - _context.Ciclos.Min(c => c.InicioCiclo).Month;
+                            List<Ciclo> NuevosCiclos = new List<Ciclo>();
 
                             for (int Index = 0; Index < Limite; Index++)
                             {
@@ -60,14 +67,12 @@ namespace lifeflow_api.Controllers
                                 if (Ciclo != null)
                                 {
                                     CiclosTrimestre.Add(Ciclo);
-                                    _context.Add(Ciclo);
-                                    await _context.SaveChangesAsync();
+                                    NuevosCiclos.Add(Ciclo);
                                 }
                             }
-                        }
-                        else if (!CiclosTrimestre.Any())
-                        {
-                            CiclosTrimestre = await _cicloService.PredecirCiclosRestantes(Id, PeriodoTrimestre);
+
+                            _context.AddRange(NuevosCiclos);
+                            _context.SaveChanges();
                         }
 
 
@@ -312,6 +317,59 @@ namespace lifeflow_api.Controllers
 
                             _context.UpdateRange(InfoEmbarazo);
                             _context.Remove(Embarazo);
+                            _context.SaveChanges();
+
+                            return Ok();
+                        }
+                        else
+                        {
+                            return BadRequest();
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        [HttpPost("terminar-embarazo/{id}")]
+        public async Task<ActionResult> TerminarEmbarazo(string Id, [FromBody] JsonElement Json)
+        {
+            try
+            {
+                // Nombre, Apellidos, fecha de parto e ID del embarazo
+                string Nombre = Json.GetProperty("Nombre").GetString() ?? null!;
+                string Apellidos = Json.GetProperty("Apellidos").GetString() ?? null!;
+                string IdEmbarazo = Json.GetProperty("IdEmbarazo").GetString() ?? null!;
+                string Parto = Json.GetProperty("Parto").GetString() ?? null!;
+                    
+                if (!string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(Apellidos)
+                    && !string.IsNullOrWhiteSpace(Id) && !string.IsNullOrWhiteSpace(IdEmbarazo) && !string.IsNullOrWhiteSpace(Parto))
+                {
+                    bool UsuarioRegistrado = await _context.Usuarios
+                        .AnyAsync(u => u.Id.Equals(Id) && u.Nombre.Equals(Nombre) && u.Apellidos.Equals(Apellidos));
+
+                    if (UsuarioRegistrado && DateOnly.TryParse(Parto, out DateOnly FechaPartoFormateada))
+                    {
+                        Embarazo? Embarazo = await _context.Embarazos
+                            .FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(IdEmbarazo)));
+
+                        if (Embarazo != null)
+                        {
+                            Embarazo.Activo = false;
+                            Embarazo.FechaParto = FechaPartoFormateada;
+
+                            _context.Update(Embarazo);
                             _context.SaveChanges();
 
                             return Ok();

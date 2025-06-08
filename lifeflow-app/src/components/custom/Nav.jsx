@@ -4,14 +4,12 @@ import TituloLifeFlow from '../../assets/img/lifeflow-text-rosa.png';
 import DefaultUserIcon from '../../assets/img/default-user-icon.png';
 import { EditCalendar, Logout } from '@mui/icons-material';
 import { GoogleLogout } from '../../services/Google';
-import EditPeriodInfoModal from "../modals/EditPeriodInfoModal";
 
 export default function Nav(props) {
     const user = props.user
 
     const [iconClicked, setIconClicked] = useState(false);
     const [userPicture, setUserPicture] = useState(user.picture);
-    const [displayEditPeriodInfo, setDisplayEditPeriodInfo] = useState(false);
     
     const toggleIconClicked = () => {
         setIconClicked(prev =>  prev === true ? false : true);
@@ -19,10 +17,6 @@ export default function Nav(props) {
 
     return (
         <>
-            <EditPeriodInfoModal 
-            user={user}
-            display={displayEditPeriodInfo} 
-            setDisplay={setDisplayEditPeriodInfo}/>
             <nav>
                 <div className="col d-flex align-items-center justify-content-start gap-3">
                     <img id="icono-app" src={IconoLifeFlow} alt="" />
@@ -45,7 +39,6 @@ export default function Nav(props) {
                         src={userPicture} onError={() => setUserPicture(DefaultUserIcon)}/>
                         {iconClicked && (
                             <div className="settings">
-                                <a onClick={() => setDisplayEditPeriodInfo(true)}><EditCalendar/> Valores menstruales</a>
                                 <a onClick={() => GoogleLogout(props.setLoginStatus)}><Logout/> Cerrar sesión</a>
                             </div>
                         )}

@@ -25,7 +25,7 @@ export default function RemindersDisplay(props){
                 <div className="d-flex align-items-center gap-3">
                     <CalendarMonth className='icon-btn--single calendar-icon'/>
                     <h4 className='m-0'>
-                        {SpanishDateString(reminder?.start?.dateTime)}
+                        {SpanishDateString(reminder?.start?.dateTime, true)}
                         <span className='fw-bold ms-2'>({duration.hours}h {duration.minutes}min)</span>
                     </h4>
                 </div>

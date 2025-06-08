@@ -1,22 +1,22 @@
 ﻿using lifeflow_api.Models;
 using lifeflow_api.Models.Scaffold;
+using Microsoft.EntityFrameworkCore;
 
 namespace lifeflow_api.Services
 {
-    public interface IUserService
+    public interface IUsuarioService
     {
         Task<Usuario> FindOrRegister(string id, string nombre, string apellidos);
         bool IsRegistered(Usuario usuario);
-
-        // --- INFORMACION DIARIA --------------------------------------------------------
-        void GuardarInformacionDiaria(InformacionDiaria info);
+        Task<bool> UsuarioExiteDuranteHTTP(string IdUsuario);
+        Task<Usuario> UsuarioPorId(string IdUsuario);
     }
 
-    public class UserService : IUserService
+    public class UsuarioService : IUsuarioService
     {
         private readonly LifeFlowContext _context;
 
-        public UserService(LifeFlowContext context)
+        public UsuarioService(LifeFlowContext context)
         {
             _context = context;
         }
@@ -48,15 +48,19 @@ namespace lifeflow_api.Services
                 return Usuario.Desconocido;
             }
         }
-
-        public void GuardarInformacionDiaria(InformacionDiaria info)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool IsRegistered(Usuario usuario)
         {
             return usuario.Id.Equals(Usuario.IdentificadorInvalido) ? false : true;
+        }
+
+        public async Task<bool> UsuarioExiteDuranteHTTP(string IdUsuario)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Id == IdUsuario);
+        }
+
+        public async Task<Usuario> UsuarioPorId(string IdUsuario)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == IdUsuario) ?? null!;
         }
     }
 

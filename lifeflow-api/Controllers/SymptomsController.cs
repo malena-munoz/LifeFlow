@@ -17,9 +17,9 @@ namespace lifeflow_api.Controllers
     public class SymptomsController : ControllerBase
     {
         private readonly LifeFlowContext _context;
-        private readonly IUserService _userService;
+        private readonly IUsuarioService _userService;
 
-        public SymptomsController(LifeFlowContext context, IUserService userService)
+        public SymptomsController(LifeFlowContext context, IUsuarioService userService)
         {
             _context = context;
             _userService = userService;

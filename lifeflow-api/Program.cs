@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ICicloService, CicloService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 
 builder.Services.AddCors(options =>
 {

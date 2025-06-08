@@ -31,7 +31,7 @@ export default function EditRemindersModal(props){
     const [displayFormFrequency, set_DisplayFormFrequency] = useState(false);  // VISTA DE LA FRECUENCIA
     const [formFrequency, set_FormFrequency] = useState('');  // FRECUENCIA
     const [formDaysWeek, set_FormDaysWeek] = useState([]);  // DIAS DE LA SEMANA
-    const [formDurationFrequencyInfinite, set_FormDurationFrequencyInfinite] = useState(true);  // VISTA DE LA DURACION DE LA FRECUENCIA
+    const [formDurationFrequencyInfinite, set_FormDurationFrequencyInfinite] = useState(null);  // VISTA DE LA DURACION DE LA FRECUENCIA
     const [formDurationFrequency, set_FormDurationFrequency] = useState('');  // DURACION DE FRECUENCIA
 
     // Construir objeto recordatorio
@@ -365,7 +365,7 @@ export default function EditRemindersModal(props){
                                 <Form.Label className='m-0'>¿Cuántas veces quieres que se repita el recordatorio?</Form.Label> 
                                 <div className='d-flex flex-row align-items-center gap-2'>
                                     <input className="form-check-input m-0" type="checkbox" 
-                                    value="" id="check-count" checked={formDurationFrequencyInfinite}
+                                    value="" id="check-count" defaultChecked={formDurationFrequencyInfinite !== null ? formDurationFrequencyInfinite : true}
                                     onChange={() => set_FormDurationFrequencyInfinite((prevSelected) => prevSelected == true ? false : true)}/>
                                     <span>Indefinido</span>
                                     <div className={`gap-2 align-items-center ${formDurationFrequencyInfinite ? 'd-none' : 'd-flex'}`}>

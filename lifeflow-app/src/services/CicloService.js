@@ -92,6 +92,37 @@ export async function BorrarEmbarazo(id, nombre, apellidos, id_embarazo) {
     }
 }
 // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export async function TerminarEmbarazo(id, nombre, apellidos, id_embarazo, parto) {
+
+    const opciones = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Nombre: nombre,
+            Apellidos: apellidos,
+            IdEmbarazo: id_embarazo,
+            Parto: parto
+        })
+    };
+
+    try {
+        const response = await fetch(`https://localhost:7245/api/ciclos/terminar-embarazo/${id}`, opciones);
+
+        if (!response.ok) {
+            const error = await response.json();
+            notyf.error(`Error del servidor (${error.status}): ${error.title}`);
+            return;
+        }
+
+        notyf.success("Embarazo terimando. ¡Felicidades!");
+
+    } catch (error) {
+        notyf.error("Error del servidor al terminar el embarazo.");
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 export async function RegistrarSangrado(id, nombre, apellidos, fecha) {
 
     const opciones = {
@@ -182,6 +213,34 @@ export function DiasDeSangrado(ciclos) {
 
     return dias;
 }
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export function DiasFertiles(ciclos) {
+    const fechasFertiles = [];
+
+    if (Array.isArray(ciclos) && ciclos.length > 0) {
+        ciclos.filter(ciclo =>
+            ciclo.duracionCiclo > 0 && ciclo.duracionMenstruacion > 0
+        )
+        .forEach(ciclo => {
+            const inicio = new Date(ciclo.inicioCiclo);
+            const ovulacion = new Date(inicio);
+            ovulacion.setDate(ovulacion.getDate() + ciclo.duracionCiclo - 14);
+
+            const inicioFertilidad = new Date(ovulacion);
+            inicioFertilidad.setDate(inicioFertilidad.getDate() - 5);
+
+            for (let i = 0; i <= 5; i++) {
+                const diaFertil = new Date(inicioFertilidad);
+                diaFertil.setDate(diaFertil.getDate() + i);
+
+                fechasFertiles.push(CurrentDate(diaFertil.getDate(), diaFertil.getMonth() + 1, diaFertil.getFullYear()));
+            }
+        });
+    } 
+
+    return fechasFertiles;
+}
+
 // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 export function EsDiaDeSangrado(dia, mes, anio, sangrados) {
     let fecha = CurrentDate(dia, mes, anio);

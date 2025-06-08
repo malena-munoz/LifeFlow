@@ -287,42 +287,10 @@ nav .settings a:hover {
   display: none;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(6, 42, 100, 0.5);
   width: 100vw;
   height: 100vh;
   z-index: 10000;
-}
-#loader .spinner {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-}
-#loader .spinner span {
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
-  background-color: #FF4D94;
-  opacity: 0;
-}
-#loader .spinner span:nth-child(1) {
-  animation: fade 1s ease-in-out infinite;
-}
-#loader .spinner span:nth-child(2) {
-  animation: fade 1s ease-in-out 0.33s infinite;
-}
-#loader .spinner span:nth-child(3) {
-  animation: fade 1s ease-in-out 0.66s infinite;
-}
-@keyframes fade {
-  0%, 100% {
-    opacity: 1;
-  }
-  60% {
-    opacity: 0;
-  }
 }
 
 button {
@@ -705,9 +673,23 @@ form#daily-data {
 }
 [page=reminders] .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging {
   flex: 1;
+  display: flex;
+  justify-content: center;
 }
 [page=reminders] .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav {
+  width: -moz-fit-content;
+  width: fit-content;
+  background-color: #FF4D94;
   justify-content: center;
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+[page=reminders] .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav button {
+  cursor: pointer !important;
+  color: #FFFFFF !important;
+}
+[page=reminders] .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav button:hover {
+  color: #AEE4FF !important;
 }
 [page=reminders] .dt-container .dt-layout-row .dt-search {
   display: flex;

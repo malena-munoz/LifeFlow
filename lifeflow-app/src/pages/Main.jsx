@@ -5,9 +5,10 @@ import Loader from '../components/custom/Loader';
 import Nav from '../components/custom/Nav';
 import Index from './views/Index';
 import Reminders from './views/Reminders';
+import Estadisticas from "./views/Estadisticas";
 import { GetGoogleReminders } from "../services/Google";
 import { AgruparRecordatoriosPorDia } from "../services/RecordatoriosService";
-import { CiclosTrimestre, DiasDeSangrado } from "../services/CicloService";
+import { CiclosTrimestre, DiasDeSangrado, DiasFertiles } from "../services/CicloService";
 
 
 export default function Main(props) {
@@ -21,6 +22,7 @@ export default function Main(props) {
     const reminders = React.useRef([]);
     const ciclos = React.useRef([]);
     const [sangrados, setSangrados] = useState([]);
+    const [fertiles, setFertiles] = useState([]);
 
     const renderPage = () => {
         switch(page){
@@ -28,15 +30,19 @@ export default function Main(props) {
                 return <Index 
                 user={login.user} 
                 token={login.token}
-                reminders={reminders}
                 ciclos={ciclos.current}
                 sangrados={sangrados}
+                fertiles={fertiles}
                 />;
             case 2:
                 return <Reminders 
                 user={login.user} 
                 token={login.token}
                 reminders={reminders}/>;
+            case 3:
+                return <Estadisticas 
+                user={login.user} 
+                token={login.token}/>;
             default:
                 return <Index/>;
         }
@@ -51,6 +57,7 @@ export default function Main(props) {
             const ciclos_trimestre = await CiclosTrimestre(login.user.sub, login.user.given_name, login.user.family_name);
             ciclos.current = ciclos_trimestre;
             setSangrados(DiasDeSangrado(ciclos_trimestre));
+            setFertiles(DiasFertiles(ciclos_trimestre));
         };
         checkIfNewUser();
         fetchCiclos();

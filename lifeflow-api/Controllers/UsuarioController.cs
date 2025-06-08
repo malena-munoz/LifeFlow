@@ -16,10 +16,10 @@ namespace lifeflow_api.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly LifeFlowContext _context;
-        private readonly IUserService _userService;
+        private readonly IUsuarioService _userService;
         private readonly ICicloService _cicloService;
 
-        public UsuarioController(LifeFlowContext context, IUserService userService, ICicloService cicloService)
+        public UsuarioController(LifeFlowContext context, IUsuarioService userService, ICicloService cicloService)
         {
             _context = context;
             _userService = userService;
@@ -101,6 +101,20 @@ namespace lifeflow_api.Controllers
                         (Ciclo Ciclo1, Ciclo Ciclo2) Predicciones = _cicloService.PredecirDosSiguientesCiclos(Ciclo);
                         Predicciones.Ciclo1.IdUsuario = Usuario.Id;
                         Predicciones.Ciclo2.IdUsuario = Usuario.Id;
+
+                        List<Ciclo> CiclosTrimestre = new List<Ciclo> { Ciclo, Predicciones.Ciclo1, Predicciones.Ciclo2 };
+
+                        for (int Index = 0; Index < 3; Index++)
+                        {
+                            Ciclo NuevoCiclo = _cicloService.PredecirProximoCicloDesdeLista(CiclosTrimestre);
+
+                            if (NuevoCiclo != null)
+                            {
+                                CiclosTrimestre.Add(NuevoCiclo);
+                                _context.Add(NuevoCiclo);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
 
                         _context.Ciclos.Add(Predicciones.Ciclo1);
                         _context.Ciclos.Add(Predicciones.Ciclo2);

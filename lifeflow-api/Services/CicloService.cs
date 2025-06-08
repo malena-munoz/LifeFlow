@@ -1,5 +1,6 @@
 ﻿using lifeflow_api.Models;
 using lifeflow_api.Models.Scaffold;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using System.Data;
@@ -14,6 +15,7 @@ namespace lifeflow_api.Services
         DateOnly ObtenerFechaUltimoCiclo(int Dia);
         float DuracionCiclo(string Duracion);
         (DateOnly Inicio, DateOnly Final) PeriodoTrimestre();
+        Task ReajustarCiclos(string IdUsuario);
         // -------------------------------
         (Ciclo ciclo1, Ciclo ciclo2) PredecirDosSiguientesCiclos(Ciclo CicloBase);
         Ciclo PredecirProximoCicloDesdeLista(List<Ciclo> Ciclos);
@@ -209,5 +211,42 @@ namespace lifeflow_api.Services
             };
 
         }
+        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+        public async Task ReajustarCiclos(string IdUsuario)
+        {
+            // Ordenar cronológicamente por fecha de inicio
+            List<Ciclo> CiclosOrdenados = await _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario) && !c.DuracionMenstruacion.Equals(0)
+                && !c.DuracionCiclo.Equals(0))
+                .OrderBy(c => c.InicioCiclo)
+                .ToListAsync();
+
+            // Reajustar DuracionCiclo en base al inicio del siguiente ciclo
+            for (int i = 0; i < CiclosOrdenados.Count - 1; i++)
+            {
+                Ciclo Actual = CiclosOrdenados[i];
+                Ciclo Siguiente = CiclosOrdenados[i + 1];
+
+                int DuracionDias = Siguiente.InicioCiclo.DayNumber - Actual.InicioCiclo.DayNumber;
+
+                if (DuracionDias > 0)
+                {
+                    Actual.DuracionCiclo = DuracionDias;
+                }
+
+                DateOnly FinCiclo = Actual.InicioCiclo.AddDays((int) Actual.DuracionCiclo - 1);
+                bool NoEsPrediccion = Actual.EsPrediccion && FinCiclo < DateOnly.FromDateTime(DateTime.Today);
+                if (NoEsPrediccion)
+                {
+                    Actual.EsPrediccion = false;
+                }
+            }
+
+            _context.Ciclos.UpdateRange(CiclosOrdenados);
+            await _context.SaveChangesAsync();
+        }
+
+
+
     }
 }

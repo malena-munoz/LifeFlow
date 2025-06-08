@@ -105,7 +105,7 @@ export default function Index(props){
             Id: infoActual?.id,
             IdUsuario: user.sub,
             Fecha: CurrentDate(datoDia, String(datoMes+1), datoAnio),
-            PruebaEmbarazo: datoPruebaEmbarazo.trim(),
+            PruebaEmbarazo: embarazo ? "No realizado" : datoPruebaEmbarazo.trim(),
             Notas: datoNotas,
             Sintomas: datoSintomasCuerpo,
             Emociones: datoEmociones,

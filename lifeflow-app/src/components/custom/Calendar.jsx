@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { HorizontalRuleRounded, Circle } from '@mui/icons-material';
 import { OverlayTrigger, Popover, FormCheck } from 'react-bootstrap';
 import { SpanishDateString, GetGoogleColorById } from '../../services/Methods'; 
-import { DiasDeSangrado, EsDiaDeSangrado, ClaseSangrado, BorrarEmbarazo } from "../../services/CicloService";
+import { DiasDeSangrado, EsDiaDeSangrado, ClaseSangrado, BorrarEmbarazo, TerminarEmbarazo } from "../../services/CicloService";
 import MomIcon from '../../assets/img/mom.png';
 
 export default function Calendar (props) {
@@ -32,6 +32,8 @@ export default function Calendar (props) {
     const ciclos = props.ciclos;
     const sangrados = props.sangrados;
     const embarazo = props.embarazo;
+
+    const [parto, setParto] = useState(null);
 
     const Calendar_CompararMesSeleccionado = (fecha) => {
         return (
@@ -300,8 +302,12 @@ export default function Calendar (props) {
                                 <p>El día del parto puede rondar por el día <strong>{SpanishDateString(embarazo.estimacionParto)}</strong>.</p>
                                 <form id="parto" className="d-flex gap-3 flex-row align-items-center">
                                     <label className="form-check-label txt-azul-oscuro fw-bold" htmlFor="pregnancy-test-1">¿En qué fecha realizaste tu parto?</label>
-                                    <input className="form-control w-auto" type="datetime-local" />     
-                                    <button className="btn-pink">Guardar</button> 
+                                    <input className="form-control w-auto"
+                                    type="date" 
+                                    onChange={(e) => setParto(e.currentTarget.value)}/>     
+                                    <button className="btn-pink"
+                                    onClick={() => TerminarEmbarazo(user.sub, user.given_name, user.family_name, embarazo.id, parto)}
+                                    >Guardar</button> 
                                     <HorizontalRuleRounded/>   
                                     <button className="btn-blue" 
                                     onClick={() => BorrarEmbarazo(user.sub, user.given_name, user.family_name, embarazo.id)}>Eliminar embarazo</button>         

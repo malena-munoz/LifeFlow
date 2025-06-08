@@ -1,0 +1,76 @@
+@import 'Colors.scss';
+
+.estadisticas {
+
+    &-header {
+        margin-bottom: 5rem;
+
+        h1 {
+            font-size: 60px;
+        }
+    }
+
+    &-reporte {
+
+        &--titulo {
+            font: {
+                weight: bold;
+                size: 25px;
+            }
+            color: map-get($map: $blue-palette, $key: b-4);
+            margin: 0;
+        }
+
+        &--mini-tabla {
+
+            td {
+                padding: .5rem !important;
+                border: 1px solid map-get($map: $blue-palette, $key: b-4);
+            }
+
+            tr td:first-child {
+                color: white;
+                background-color: map-get($map: $blue-palette, $key: b-4);
+            }
+        }
+    }
+
+    &-exportar {
+        position: fixed;
+        display: flex;
+        bottom: 2rem;
+        right: 2rem;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: .5rem;
+    }
+}
+
+
+.egg {
+    z-index: -1;
+    position: absolute;
+    background: radial-gradient(circle at center, #f4dada 0%, #f2bebe 100%);
+    border-radius: 50%;
+    border: 2px solid #d08c8c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    animation: float 5s ease-in-out infinite;
+    box-shadow: 0 0 4px rgba(255, 182, 193, 0.6);
+}
+
+.nucleus {
+    width: 30%;
+    height: 30%;
+    background-color: #a25d5d;
+    border-radius: 50%;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
