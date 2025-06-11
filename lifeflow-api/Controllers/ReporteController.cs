@@ -12,17 +12,12 @@ namespace lifeflow_api.Controllers
     [ApiController]
     public class ReporteController : ControllerBase
     {
-        private readonly LifeFlowContext _context;
         private readonly IUsuarioService _usuarioService;
-        private readonly ICicloService _cicloService;
         private readonly IReporteService _reporteService;
 
-        public ReporteController(LifeFlowContext context, IUsuarioService usuarioService, 
-            ICicloService cicloService, IReporteService reporteService)
+        public ReporteController(IUsuarioService usuarioService, IReporteService reporteService)
         {
-            _context = context;
             _usuarioService = usuarioService;
-            _cicloService = cicloService;
             _reporteService = reporteService;
         }
 

@@ -14,13 +14,11 @@ namespace lifeflow_api.Controllers
     public class CycleController : ControllerBase
     {
         private readonly LifeFlowContext _context;
-        private readonly IUsuarioService _userService;
         private readonly ICicloService _cicloService;
 
-        public CycleController(LifeFlowContext context, IUsuarioService userService, ICicloService cicloService)
+        public CycleController(LifeFlowContext context, ICicloService cicloService)
         {
             _context = context;
-            _userService = userService;
             _cicloService = cicloService;
         }
 
