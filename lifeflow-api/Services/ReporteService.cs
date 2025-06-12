@@ -81,22 +81,21 @@ namespace lifeflow_api.Services
         public ReporteOpcion1 Reporte_Opcion1(string IdUsuario)
         {
             List<Ciclo> Ciclos = _context.Ciclos
-                .Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+                .Where(c => c.IdUsuario.Equals(IdUsuario)).OrderBy(c => c.InicioCiclo).ToList();
 
-            // El último ciclo real sería el último registrado como no predictivo
-            Ciclo? UltimoCicloReal = Ciclos
-                .Where(c => !c.EsPrediccion)
-                .OrderByDescending(c => c.InicioCiclo)
-                .FirstOrDefault();
-
-            // El ciclo actual es el primer ciclo predictivo registrado
             Ciclo? PrimerCicloPrediccion = Ciclos
-                .Where(c => c.EsPrediccion)
-                .OrderBy(c => c.InicioCiclo)
-                .FirstOrDefault();
+               .Where(c => DateOnly.FromDateTime(DateTime.Now) >= c.InicioCiclo
+                   && DateOnly.FromDateTime(DateTime.Now) <= c.InicioCiclo.AddDays((int) c.DuracionCiclo))         
+               .FirstOrDefault();
+
+            if (PrimerCicloPrediccion == null) return null!;
+
+            int Index = Ciclos.IndexOf(PrimerCicloPrediccion);
+
+            Ciclo? UltimoCicloReal = Ciclos[Index - 1];
 
             // Si alguno de ellos es nulo, se retorna nulo
-            if (UltimoCicloReal == null || PrimerCicloPrediccion == null) return null!;
+            if (UltimoCicloReal == null) return null!;
 
             // Información diaria registrada entre ambos ciclos
             List<InformacionDiaria> InformacionEntreCiclos = _context.InformacionDiaria
@@ -397,7 +396,8 @@ namespace lifeflow_api.Services
             // El ciclo actual es el primer ciclo predictivo registrado
             Ciclo? CicloActual = _context.Ciclos
                 .Where(c => c.IdUsuario.Equals(IdUsuario))
-                .Where(c => c.EsPrediccion)
+                .Where(c => DateOnly.FromDateTime(DateTime.Now) >= c.InicioCiclo 
+                    && DateOnly.FromDateTime(DateTime.Now) <= DateOnly.FromDateTime(DateTime.Now.AddDays(c.DuracionCiclo)))
                 .OrderBy(c => c.InicioCiclo)
                 .FirstOrDefault();
 

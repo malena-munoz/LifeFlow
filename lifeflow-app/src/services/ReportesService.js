@@ -17,8 +17,13 @@ export async function ReporteOpcion1(id) {
         const response = await fetch(`https://localhost:7245/api/reporte/opcion-1`, opciones);
 
         if (!response.ok) {
-            const error = await response.json();
-            notyf.error(`Error del servidor (${error.status}): ${error.title}`);
+            if (response.status === 400) {
+                const error = await response.json();
+                notyf.error(`El reporte no puede generarse ya que tu ciclo actual es el primer registrado.`);
+            } else {
+                const error = await response.json();
+                notyf.error(`Error del servidor (${response.status}): ${error.title}`);
+            }
             return null;
         }
 

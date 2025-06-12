@@ -307,6 +307,7 @@ export default function Estadisticas(props) {
                                 </ul>
                             </div>
                         </Collapse>
+                        <h4>Tu actual ciclo empezó el <strong>{SpanishDateString(reporte.cicloActual.inicioCiclo)}</strong></h4>
                         <img src={CicloIcon} alt="" className="w-75" />
                         <div className="d-flex flex-column gap-2 mb-3">
                             <p>Un ciclo menstrual femenino está divido por 4 fases distintas, en la que cada una tiene diferentes funciones: <strong>menstrual</strong>, donde se produce el sangrado; <strong>folicular</strong>, en la que se desarrolla el óvulo; <strong>ovulatoria</strong>, cuando el óvulo es liberado; y <strong>lútea</strong>, que prepara el cuerpo para un posible embarazo.</p>
