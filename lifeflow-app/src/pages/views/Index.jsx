@@ -18,6 +18,8 @@ export default function Index(props){
     const recordatorios = props.reminders;
     const ciclos = props.ciclos;
     const sangrados = props.sangrados;
+    const fertiles = props.fertiles;
+
     const calendar_obj = useMemo(() => CalendarObject(), []);
     const [mesSeleccionado, setMesSeleccionado] = useState(calendar_obj.actual);
 
@@ -160,6 +162,7 @@ export default function Index(props){
             ciclos={ciclos}
             user={user}
             sangrados={sangrados}
+            fertiles={fertiles}
             mesSeleccionado={mesSeleccionado}
             setMesSeleccionado={setMesSeleccionado}
             setEstadoSangradoDia={setEstadoSangradoDia}

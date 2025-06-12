@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { HorizontalRuleRounded, Circle } from '@mui/icons-material';
 import { OverlayTrigger, Popover, FormCheck } from 'react-bootstrap';
 import { SpanishDateString, GetGoogleColorById } from '../../services/Methods'; 
-import { DiasDeSangrado, EsDiaDeSangrado, ClaseSangrado, BorrarEmbarazo, TerminarEmbarazo } from "../../services/CicloService";
+import { DiasDeSangrado, EsDiaDeSangrado, EsDiaOvulacion, ClaseSangrado, BorrarEmbarazo, TerminarEmbarazo } from "../../services/CicloService";
 import MomIcon from '../../assets/img/mom.png';
 
 export default function Calendar (props) {
@@ -32,6 +32,7 @@ export default function Calendar (props) {
     const ciclos = props.ciclos;
     const sangrados = props.sangrados;
     const embarazo = props.embarazo;
+    const fertiles = props.fertiles;
 
     const [parto, setParto] = useState(null);
 
@@ -271,6 +272,7 @@ export default function Calendar (props) {
                             `}>
                             <span className={`
                                 day-number
+                                ${EsDiaOvulacion(String(day), mesSeleccionado.mes, mesSeleccionado.anio, fertiles) ? 'day-ovulation' : ''}
                                 ${EsDiaDeSangrado(String(day), mesSeleccionado.mes, mesSeleccionado.anio, sangrados) ? ClaseSangrado(String(day), mesSeleccionado.mes, mesSeleccionado.anio, sangrados) : ''}
                             `}>{day}</span>
                             <div className="day-alerts">
@@ -327,7 +329,7 @@ export default function Calendar (props) {
                                     <i class="fi fi-rr-browser me-1"></i><strong>Etapas del embarazo - </strong><span className="txt-rosa-oscuro">OASH</span>: <a target="_blank" href="https://espanol.womenshealth.gov/pregnancy/youre-pregnant-now-what/stages-pregnancy">https://espanol.womenshealth.gov/pregnancy/youre-pregnant-now-what/stages-pregnancy</a>
                                 </li>
                                 <li className="d-flex align-items-center gap-2">
-                                    <i class="fi fi-rr-browser me-1"></i><strong>Articulos sobre el embarazo (ENG) - </strong><span className="txt-rosa-oscuro">Flo</span>: <a target="_blank" href="https://flo.health/pregnancy">https://flo.health/pregnancy</a>
+                                    <i class="fi fi-rr-browser me-1"></i><strong>Articulos sobre el embarazo - </strong><span className="txt-rosa-oscuro">Flo</span>: <a target="_blank" href="https://flo.health/es/embarazo">https://flo.health/es/embarazo</a>
                                 </li>
                                 <li className="d-flex align-items-center gap-2">
                                     <i class="fi fi-rr-film me-1"></i><strong>8 tips para empezar el embarazo con buen pie - </strong><span className="txt-rosa-oscuro"> FisioOnline</span>: <a target="_blank" href="https://youtu.be/MINAxk2pszk?si=mcLZSUFMSGWfyh5z">https://youtu.be/MINAxk2pszk?si=mcLZSUFMSGWfyh5z</a>

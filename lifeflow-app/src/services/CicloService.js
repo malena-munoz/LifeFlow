@@ -253,6 +253,17 @@ export function EsDiaDeSangrado(dia, mes, anio, sangrados) {
     }
 }
 // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+export function EsDiaOvulacion(dia, mes, anio, ovulados) {
+    let fecha = CurrentDate(dia, Number(mes + 1), anio);
+
+    if (ovulados !== null && ovulados !== undefined && ovulados.length > 0) { 
+        let existe = ovulados.find(s => s === fecha);
+        return existe !== null && existe !== undefined ? true : false;
+    } else {
+        return false;
+    }
+}
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 export function ClaseSangrado(dia, mes, anio, sangrados) {
     let fecha = new Date(CurrentDate(dia, Number(mes+1), anio));
     let actual = new Date();

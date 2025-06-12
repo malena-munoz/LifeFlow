@@ -9,12 +9,14 @@ import Estadisticas from "./views/Estadisticas";
 import { GetGoogleReminders } from "../services/Google";
 import { AgruparRecordatoriosPorDia } from "../services/RecordatoriosService";
 import { CiclosTrimestre, DiasDeSangrado, DiasFertiles } from "../services/CicloService";
+import Privacidad from "./views/Privacidad";
 
 
 export default function Main(props) {
     const login = props.login;
     const setLoginStatus = props.setLoginStatus;
 
+    // PAGINA ACTIVA Y ES NUEVO USUARIO
     const [page, setPage] = useState(1);
     const [newUser, setNewUser] = useState(null);
 
@@ -23,6 +25,9 @@ export default function Main(props) {
     const ciclos = React.useRef([]);
     const [sangrados, setSangrados] = useState([]);
     const [fertiles, setFertiles] = useState([]);
+
+    // DISPLAY DE LA PRIVACIDAD
+    const [displayPrivacidad, setDisplayPrivacidad] = useState(false);
 
     const renderPage = () => {
         switch(page){
@@ -44,7 +49,13 @@ export default function Main(props) {
                 user={login.user} 
                 token={login.token}/>;
             default:
-                return <Index/>;
+                return <Index 
+                user={login.user} 
+                token={login.token}
+                ciclos={ciclos.current}
+                sangrados={sangrados}
+                fertiles={fertiles}
+                />;
         }
     };
 
@@ -59,8 +70,11 @@ export default function Main(props) {
             setSangrados(DiasDeSangrado(ciclos_trimestre));
             setFertiles(DiasFertiles(ciclos_trimestre));
         };
+
         checkIfNewUser();
-        fetchCiclos();
+        if (!newUser) {
+            fetchCiclos();
+        }
     }, []);
 
     useEffect(() => {
@@ -74,7 +88,12 @@ export default function Main(props) {
 
     return (
         <>
-            <Nav user={login.user} setLoginStatus={setLoginStatus} setPage={setPage}/>
+            <Nav 
+            user={login.user} 
+            setLoginStatus={setLoginStatus} 
+            setPage={setPage}
+            setDisplayPrivacidad={setDisplayPrivacidad}/>
+            <Privacidad display={displayPrivacidad} setDisplay={setDisplayPrivacidad}/>
             <ResgisterPeriodInfoModal user={login.user} display={newUser}/>
             <Loader/>
             {renderPage()}

@@ -110,8 +110,7 @@ export default function Estadisticas(props) {
                         <option value={0} selected disabled> -- Elige una opción --</option>
                         <option value={1}>Comparación del último ciclo y el ciclo actual</option>
                         <option value={2}>Correlación entre síntomas y etapas del ciclo actual</option>
-                        <option value={3}>Estadísticas de los ciclos del último año ¨{new Date().getFullYear()}¨</option>
-                        <option value={4}>Variabilidad de los ciclos del último año ¨{new Date().getFullYear()}¨</option>
+                        <option value={3}>Historial de ciclos</option>
                     </select>
                 </div>
                 {(reporte !== null && reporte !== undefined && reporte.opcion == 1) &&
@@ -568,7 +567,7 @@ export default function Estadisticas(props) {
             </div>
             {(() => {
                 if (reporte) {
-                    if (reporte.opcion == 1) {
+                    if (reporte.opcion != 2) {
                         return (
                             <div className="estadisticas-exportar">
                                 <button className="btn-blue" onClick={() => GenerarExcel()}>

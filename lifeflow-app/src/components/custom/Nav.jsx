@@ -28,7 +28,7 @@ export default function Nav(props) {
                         <li onClick={() => props.setPage(2)}><a>Recordatorios</a></li>
                         <li onClick={() => props.setPage(3)}><a>Estadísticas</a></li>
                         <li onClick={() => props.setPage(4)}><a>Guía</a></li>
-                        <li onClick={() => props.setPage(5)}><a>Privacidad</a></li>
+                        <li onClick={() => props.setDisplayPrivacidad(true)}><a>Privacidad</a></li>
                     </ul> 
                 </div>
                 <div className="col d-flex align-items-center justify-content-end gap-3">
