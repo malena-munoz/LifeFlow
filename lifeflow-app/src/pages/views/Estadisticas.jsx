@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import '../../assets/styles/Estadisticas.css';
-import { ExcelOpcion1, ReporteOpcion1, ReporteOpcion2 } from "../../services/ReportesService";
+import { ExcelOpcion1, ReporteOpcion1, ReporteOpcion2, ReporteOpcion3, ExcelOpcion3 } from "../../services/ReportesService";
 import { SpanishDateString } from "../../services/Methods";
 import { Container, Row, Col, ListGroup, Table, Collapse, Button } from "react-bootstrap";
 import BarChartComparativo from "../../components/graphs/BarChartComparativo";
 import { Emotions, BodyParts, Symptoms, FemFluid } from "../../services/Objects";
 import CicloIcon from '../../assets/img/fases-ciclo.png';
+import DataTable from 'datatables.net-react';
+import DT from 'datatables.net-dt';
 
 export default function Estadisticas(props) {
     // Datos del usuario
@@ -47,6 +49,20 @@ export default function Estadisticas(props) {
                 } catch (error) {} finally {
                     document.querySelector('#loader').style.display = 'none';
                 }
+            } else {
+                try {
+                    document.querySelector('#loader').style.display = 'flex';
+                    const [opcion_3] = await Promise.all([
+                        ReporteOpcion3(user.sub),
+                        delay(2000)
+                    ]);
+                    setReporte(opcion_3);
+                    setIndiceReporte(3);
+                    console.log(opcion_3);
+                    DataTable.use(DT);
+                } catch (error) {} finally {
+                    document.querySelector('#loader').style.display = 'none';
+                }
             }
         }
     }
@@ -57,6 +73,16 @@ export default function Estadisticas(props) {
             try {
                 await Promise.all([
                     ExcelOpcion1(user.sub, user.given_name),
+                    delay(2000)
+                ]);
+            } catch (error) {} finally {
+                document.querySelector('#loader').style.display = 'none';
+            }   
+        } else if (indiceReporte == 3) {
+            document.querySelector('#loader').style.display = 'flex';
+            try {
+                await Promise.all([
+                    ExcelOpcion3(user.sub, user.given_name),
                     delay(2000)
                 ]);
             } catch (error) {} finally {
@@ -80,6 +106,55 @@ export default function Estadisticas(props) {
 
         setEggs(newEggs);
     }, []);
+
+    const options = {
+        columnDefs: [
+            { targets: 0, width: '500px' }
+        ],          
+        pageLength: 5,
+        lengthChange: false,
+        language :{
+            emptyTable: "No hay ciclos ni sangrados registrados.",
+            entries: "Entradas",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+            infoFiltered: "(filtrado de _MAX_ entradas totales)",
+            infoPostFix: "",
+            decimal: ",",
+            thousands: ".",
+            lengthMenu: "Mostrar _MENU_ entradas",
+            loadingRecords: "Cargando...",
+            processing: "Procesando...",
+            search: '<i class="fi fi-rr-search"></i>',
+            searchPlaceholder: "",
+            zeroRecords: "No se encontraron registros coincidentes",
+            paginate: {
+                first: '<i class="fi fi-rr-angle-double-small-left"></i>',
+                last: '<i class="fi fi-rr-angle-double-small-right"></i>',
+                next: '<i class="fi fi-rr-angle-small-right"></i>',
+                previous: '<i class="fi fi-rr-angle-small-left"></i>'
+            },
+            aria: {
+                orderable: "Ordenable",
+                orderableReverse: "Ordenable inverso",
+                orderableRemove: "Eliminar ordenable",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior",
+                    number: "Número"
+                }
+            },
+            url: "",
+        },
+        ordering: false,
+        pagingType: 'full',
+        info: false,
+        rowCallback: function (row, data, index) {
+            
+        }        
+    };
 
     return (
         <article page="estadisticas">
@@ -562,6 +637,30 @@ export default function Estadisticas(props) {
                                 })()
                             }
                         </div>
+                    </div>
+                )}
+                {(reporte !== null && reporte !== undefined && reporte.opcion == 3) && (
+                    
+                    <div className="estadisticas-reporte reporte-tabla container d-flex flex-column gap-3 align-items-center">
+                        <div className="d-flex flex-column align-items-center gap-3">
+                            <h2 className="estadisticas-reporte--titulo">Historial de ciclos</h2>
+                            <h5>El historial tiene incluido los ciclos predicción hasta la fecha.</h5>
+                        </div>
+                        <DataTable
+                        id="historial-ciclos"      
+                        className="display" 
+                        options={options}
+                        data={reporte.menstruacionesFilas}
+                        width="100%"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>Inicio del ciclo</th>
+                                    <th>Duración de la menstruación</th>
+                                    <th>Duración del ciclo</th>
+                                </tr>
+                            </thead>
+                        </DataTable>
                     </div>
                 )}
             </div>

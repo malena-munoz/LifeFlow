@@ -1,5 +1,6 @@
 ﻿using lifeflow_api.Models.Scaffold;
 using lifeflow_api.Services;
+using System.Globalization;
 
 namespace lifeflow_api.Models.Objects
 {
@@ -40,5 +41,56 @@ namespace lifeflow_api.Models.Objects
         public List<InformacionDiaria> InfoFaseFolicular { get; set; } = new List<InformacionDiaria>();
         public List<InformacionDiaria> InfoFaseOvulacion { get; set; } = new List<InformacionDiaria>();
         public List<InformacionDiaria> InfoFaseLutea { get; set; } = new List<InformacionDiaria>();
+    }
+
+    public class ReporteOpcion3
+    {
+        public int Opcion { get => 3; }
+        public List<Ciclo> Menstruaciones { get; set; } = new List<Ciclo>();
+        public List<List<string>> MenstruacionesFilas 
+        { 
+            get
+            {
+                List<List<string>> Filas = new List<List<string>>();
+
+                foreach (Ciclo Menstruacion in Menstruaciones)
+                {
+                    var cultura = new CultureInfo("es-ES");
+
+                    string InicioFormateado = Menstruacion.InicioCiclo
+                        .ToDateTime(TimeOnly.MinValue) // convertir DateOnly a DateTime
+                        .ToString("dddd, d 'de' MMMM 'de' yyyy", cultura);
+
+                    // Capitalizar la primera letra
+                    InicioFormateado = char.ToUpper(InicioFormateado[0]) + InicioFormateado[1..];
+
+                    Filas.Add(new List<string>
+                    {
+                        InicioFormateado,
+                        Menstruacion.DuracionMenstruacion.ToString(),
+                        Menstruacion.DuracionCiclo.ToString()
+                    });
+                }
+
+                return Filas;
+            }
+        }
+        public List<Ciclo> Sangrados { get; set; } = new List<Ciclo>();
+        public List<List<string>> SangradosFilas
+        {
+            get
+            {
+                List<List<string>> Filas = new List<List<string>>();
+
+                foreach (Ciclo Sangrado in Sangrados)
+                {
+                    Filas.Add(new List<string> {
+                        Sangrado.InicioCiclo.ToString("yyyy-MM-dd")
+                    });
+                }
+
+                return Filas;
+            }
+        }
     }
 }

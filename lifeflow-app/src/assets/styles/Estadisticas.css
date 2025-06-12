@@ -18,6 +18,137 @@
   color: white;
   background-color: #1976D2;
 }
+.estadisticas-reporte.reporte-tabla > div {
+  width: 100%;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:first-child {
+  margin-top: 0;
+  flex-direction: row-reverse;
+  gap: 4rem;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:first-child .dt-layout-cell {
+  margin: 0;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:first-child .dt-layout-cell.dt-layout-end {
+  flex: 1;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) {
+  margin-bottom: 0;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) .dt-layout-end {
+  margin: 0;
+  flex: 1;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav {
+  width: -moz-fit-content;
+  width: fit-content;
+  background-color: #FF4D94;
+  justify-content: center;
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav button {
+  cursor: pointer !important;
+  color: #FFFFFF !important;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row:nth-child(3) .dt-layout-end .dt-paging nav button:hover {
+  color: #AEE4FF !important;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row .dt-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row .dt-search label {
+  height: 40px;
+  margin-left: 0.5rem;
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row .dt-search label i {
+  width: 1rem;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row .dt-search label i::before {
+  font-size: inherit;
+  line-height: inherit;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row .dt-search input {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  border-color: #cccccc;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table {
+  flex: 1;
+  align-items: flex-start;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable th {
+  background-color: #1976D2;
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  text-align: left !important;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable td {
+  padding: 1rem;
+  background-color: #FFFFFF;
+  box-shadow: none;
+  text-align: left !important;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable td:last-child {
+  padding: 0;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable tr {
+  border-color: #DBDBDD;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .dt-empty {
+  text-align: center !important;
+  padding: 1rem 0 !important;
+  font-weight: bold;
+  color: #c73b31;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .tr-selectable {
+  cursor: pointer;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .tr-selectable td {
+  transition: all ease-in 0.2s;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .tr-selectable:hover td {
+  background-color: #AEE4FF;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .tr-selectable.tr-selected td {
+  background-color: #64B5F6;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .tr-selectable.tr-selected:hover td {
+  background-color: #FFC1E3;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .form-check-input {
+  width: 20px;
+  height: 20px;
+  vertical-align: text-top;
+  cursor: pointer;
+  margin: 0;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .form-check-input:focus {
+  box-shadow: none;
+}
+.estadisticas-reporte.reporte-tabla > div .dt-container .dt-layout-row.dt-layout-table .dataTable .form-check-input:checked {
+  border-color: rgba(100, 100, 111, 0.5019607843);
+  background-color: rgba(100, 100, 111, 0.5019607843);
+}
 .estadisticas-exportar {
   position: fixed;
   display: flex;

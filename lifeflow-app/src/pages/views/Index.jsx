@@ -147,7 +147,7 @@ export default function Index(props){
             const data = await Embarazo(user.sub, user.given_name, user.family_name);
             setEmbarazo(data); 
         }
-        fetchEmbarazo();
+        if (user) { fetchEmbarazo(); }
     }, []);
 
     return (

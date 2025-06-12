@@ -10,6 +10,7 @@ import { GetGoogleReminders } from "../services/Google";
 import { AgruparRecordatoriosPorDia } from "../services/RecordatoriosService";
 import { CiclosTrimestre, DiasDeSangrado, DiasFertiles } from "../services/CicloService";
 import Privacidad from "./views/Privacidad";
+import Guia from "./views/Guia";
 
 
 export default function Main(props) {
@@ -48,6 +49,8 @@ export default function Main(props) {
                 return <Estadisticas 
                 user={login.user} 
                 token={login.token}/>;
+            case 4: 
+                return <Guia/>;
             default:
                 return <Index 
                 user={login.user} 
@@ -82,7 +85,9 @@ export default function Main(props) {
             const data = await GetGoogleReminders(login.token, login.user.sub);
             reminders.current = data;
         }
-        fetchReminders();
+        if (!newUser) {
+            fetchReminders();
+        }     
     }, [login.token, login.user.sub]);
     
 

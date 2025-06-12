@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
 using lifeflow_api.Models;
 using lifeflow_api.Models.Objects;
@@ -13,9 +14,8 @@ namespace lifeflow_api.Services
         ReporteOpcion1 Reporte_Opcion1(string IdUsuario);
         byte[] Excel_Opcion1(ReporteOpcion1 Reporte, Usuario Usuario);
         ReporteOpcion2 Reporte_Opcion2(string IdUsuario);
-        object Reporte_Opcion3(string IdUsuario);
-        object Reporte_Opcion4(string IdUsuario);
-
+        ReporteOpcion3 Reporte_Opcion3(string IdUsuario);
+        byte[] Excel_Opcion3(ReporteOpcion3 Reporte, Usuario Usuario);
     }
 
     public class ReporteService : IReporteService
@@ -459,17 +459,86 @@ namespace lifeflow_api.Services
         }
 
         // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-        // Devuelve los datos estructurados para el reporte 3: Estadísticas de los ciclos del último año
-        public object Reporte_Opcion3(string IdUsuario)
+        // Devuelve los datos estructurados para el reporte 3: Historial de ciclos menstruales
+        public ReporteOpcion3 Reporte_Opcion3(string IdUsuario)
         {
-            throw new NotImplementedException();
+            ReporteOpcion3 Reporte = new ReporteOpcion3();
+
+            // Lista de ciclos menstruales
+            List<Ciclo> Ciclos = _context.Ciclos
+                .Where(c => c.IdUsuario.Equals(IdUsuario)).ToList();
+
+            // Obtener los rangos embarazo por usuario usando estimación de fecundación y fecha de parto/estimación parto
+            var RangosEmbarazo = _context.Embarazos
+                .Select(e => new
+                {
+                    e.IdUsuario,
+                    Inicio = e.EstimacionFecundacion,
+                    Fin = e.FechaParto == DateOnly.MinValue ? e.EstimacionParto : e.FechaParto
+                })
+                .ToList();
+
+            // Filtrar ciclos que NO están dentro de ningún rango embarazo
+            var CiclosFueraEmbarazo = Ciclos
+                .Where(c =>
+                {
+                    var rangosUsuario = RangosEmbarazo.Where(r => r.IdUsuario == c.IdUsuario);
+
+                    return !rangosUsuario.Any(r => c.InicioCiclo >= r.Inicio && c.InicioCiclo <= r.Fin);
+                })
+                .ToList();
+
+            Reporte.Menstruaciones = CiclosFueraEmbarazo.OrderBy(c => c.InicioCiclo).ToList();
+            Reporte.Sangrados = Ciclos.Where(c => c.DuracionMenstruacion == 0 && c.DuracionCiclo == 0).ToList();
+                 
+            return Reporte;
         }
 
-        // ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-        // Devuelve los datos estructurados para el reporte 4: Variabilidad de los ciclos del último año
-        public object Reporte_Opcion4(string IdUsuario)
+        public byte[] Excel_Opcion3(ReporteOpcion3 Reporte, Usuario Usuario)
         {
-            throw new NotImplementedException();
+            using (XLWorkbook Workbook = new XLWorkbook())
+            {
+                IXLWorksheet Worksheet = Workbook.Worksheets.Add("Reporte");
+                Excel_EstilosPrevios(Worksheet);
+                Excel_DatosUsuario(Worksheet, Usuario);
+
+                Worksheet.Range(Worksheet.Cell(9, 2), Worksheet.Cell(9, 3)).Merge().SetValue("Inicio del ciclo").Style
+                    .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                    .Font.SetBold(true).Fill.SetBackgroundColor(XLColor.FromHtml("#AEE4FF"));
+                Worksheet.Column(4).Width = 25;
+
+                Worksheet.Cell(9, 4).SetValue("Duración de la menstruación").Style
+                    .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                    .Font.SetBold(true).Fill.SetBackgroundColor(XLColor.FromHtml("#AEE4FF"));
+                Worksheet.Column(4).Width = 25;
+
+                Worksheet.Cell(9, 5).SetValue("Duración del ciclo").Style
+                    .Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center)
+                    .Font.SetBold(true).Fill.SetBackgroundColor(XLColor.FromHtml("#AEE4FF"));
+                Worksheet.Column(5).Width = 25;
+
+                Worksheet.Range(Worksheet.Cell(7, 2), Worksheet.Cell(7, 5)).Merge()
+                    .SetValue("Historial de ciclos").Style
+                    .Fill.SetBackgroundColor(XLColor.FromHtml("#FFC1E3"))
+                    .Font.SetBold(true).Font.SetFontColor(XLColor.FromHtml("#8B0A36"));
+
+                for (int Index = 0; Index < Reporte.MenstruacionesFilas.Count(); Index++)
+                {
+                    Worksheet.Range(Worksheet.Cell(10 + Index, 2), Worksheet.Cell(10 + Index, 3)).Merge()
+                        .SetValue(Reporte.MenstruacionesFilas[Index][0]);
+                    Worksheet.Cell(10 + Index , 4).SetValue(Reporte.MenstruacionesFilas[Index][1]);
+                    Worksheet.Cell(10 + Index, 5).SetValue(Reporte.MenstruacionesFilas[Index][2]);
+                }  
+                
+                Excel_EstilosPosteriores(Worksheet);
+
+                using (MemoryStream Stream = new MemoryStream())
+                {
+                    Workbook.SaveAs(Stream);
+                    return Stream.ToArray();
+                }
+            }
         }
+
     }
 }
